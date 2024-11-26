@@ -22,7 +22,7 @@ SD_FO_Status <- c("N", "SD", "OF")
 
 # Predict probabilities for Municipality and SD.FO.Status
 municipality_probs <- c(City = 0.5, Town = 0.3, Village = 0.2)
-sd_fo_status_probs <- c(N = 0.6, SD = 0.2, FO = 0.2)
+sd_fo_status_probs <- c(N = 0.6, SD = 0.2, FO = 0.2) #bridge is considered structurally deficient (SD), functionally obsolete (FO), or neither (N) 
 
 
 # Create a dataset by randomly assigning municipality, SD.FO.Status, AgeAtInspection and SD.FO. status to 1000 bridges
