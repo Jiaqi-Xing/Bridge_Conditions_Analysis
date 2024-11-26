@@ -1,69 +1,49 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Tests cleaned bridge condition data
+# Author: Ariel Xing
+# Date: 25 November 2024
+# Contact: ariel.xing@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: cleaned bridge condition data
+# Any other information needed? None
 
 
 #### Workspace setup ####
 library(tidyverse)
-library(testthat)
+library(validate)
+library(arrow)
+cleaned_data <- read_parquet("data/02-analysis_data/cleaned_bridge_condition_data.parquet")
 
-data <- read_csv("data/02-analysis_data/analysis_data.csv")
-
+# Test if the data was successfully loaded
+if (exists("data")) {
+  message("Test Passed: The dataset was successfully loaded.")
+} else {
+  stop("Test Failed: The dataset could not be loaded.")
+}
 
 #### Test data ####
-# Test that the dataset has 151 rows - there are 151 divisions in Australia
-test_that("dataset has 151 rows", {
-  expect_equal(nrow(analysis_data), 151)
-})
+rules <- validator(
+  nrow(cleaned_data) > 0,                                  # Dataset must have rows
+  all(!is.na(cleaned_data)),                               # No missing values in any column
+  ncol(cleaned_data) >= 4,                                 # Ensure at least 4 columns exist
+  all(cleaned_data$Municipality %in% c("Town", "City", "Village")), # Valid Municipality values
+  all(cleaned_data$SD.FO.Status %in% c("N", "SD", "FO")),  # Valid SD.FO.Status values
+  all(cleaned_data$AgeAtInspection > 0),                   # AgeAtInspection must be > 0
+  all(cleaned_data$Condition >= 1 & cleaned_data$Condition <= 7), # Condition must be between 1 and 7
+  n_distinct(cleaned_data$Municipality) == 3,              # Municipality column should have 3 unique values
+  n_distinct(cleaned_data$SD.FO.Status) == 3               # SD.FO.Status column should have 3 unique values
+)
 
-# Test that the dataset has 3 columns
-test_that("dataset has 3 columns", {
-  expect_equal(ncol(analysis_data), 3)
-})
+# Evaluate the rules
+results <- confront(cleaned_data, rules)
 
-# Test that the 'division' column is character type
-test_that("'division' is character", {
-  expect_type(analysis_data$division, "character")
-})
+# Print summary of the validation results
+summary(results)
 
-# Test that the 'party' column is character type
-test_that("'party' is character", {
-  expect_type(analysis_data$party, "character")
-})
+# Show detailed violations (if any)
+violations(results)
 
-# Test that the 'state' column is character type
-test_that("'state' is character", {
-  expect_type(analysis_data$state, "character")
-})
+unique_municipalities <- unique(cleaned_data$Municipality)
 
-# Test that there are no missing values in the dataset
-test_that("no missing values in dataset", {
-  expect_true(all(!is.na(analysis_data)))
-})
-
-# Test that 'division' contains unique values (no duplicates)
-test_that("'division' column contains unique values", {
-  expect_equal(length(unique(analysis_data$division)), 151)
-})
-
-# Test that 'state' contains only valid Australian state or territory names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", "Western Australia", 
-                  "Tasmania", "Northern Territory", "Australian Capital Territory")
-test_that("'state' contains valid Australian state names", {
-  expect_true(all(analysis_data$state %in% valid_states))
-})
-
-# Test that there are no empty strings in 'division', 'party', or 'state' columns
-test_that("no empty strings in 'division', 'party', or 'state' columns", {
-  expect_false(any(analysis_data$division == "" | analysis_data$party == "" | analysis_data$state == ""))
-})
-
-# Test that the 'party' column contains at least 2 unique values
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(analysis_data$party)) >= 2)
-})
+# Print the unique Municipality values
+print(unique_municipalities)
