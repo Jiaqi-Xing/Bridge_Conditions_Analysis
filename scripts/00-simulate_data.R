@@ -5,7 +5,7 @@
 # Contact: ariel.xing@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed
-# Any other information needed? Make sure you are in the `Bridge_Condition_Analysis` rproj
+# Any other information needed? Make sure you are in the `NYS_Bridge_Condition_Analysis` rproj
 
 
 #### Workspace setup ####
