@@ -33,4 +33,4 @@ cleaned_data <- raw_data %>%
   drop_na()
 
 #### Save data ####
-write_parquet(cleaned_data, "data/02-analysis_data/cleaned_data.parquet")
+write_parquet(cleaned_data, "data/02-analysis_data/cleaned_bridge_condition_data.parquet")
