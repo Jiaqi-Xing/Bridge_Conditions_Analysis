@@ -1,23 +1,22 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the simulated Australian 
-  #electoral divisions dataset.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Tests the structure and validity of the simulated bridge condition data 
+# Author: Ariel Xing
+# Date: 25 November 2024
+# Contact: ariel.xing@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
   # - The `tidyverse` package must be installed and loaded
   # - 00-simulate_data.R must have been run
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Any other information needed? Make sure you are in the `NYS_Bridge_Condition_Analysis` rproj
 
 
 #### Workspace setup ####
 library(tidyverse)
 
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
+simulated_data <- read_csv("data/00-simulated_data/simulated_bridge_condition_data.csv")
 
 # Test if the data was successfully loaded
-if (exists("analysis_data")) {
+if (exists("simulated_data")) {
   message("Test Passed: The dataset was successfully loaded.")
 } else {
   stop("Test Failed: The dataset could not be loaded.")
@@ -25,65 +24,89 @@ if (exists("analysis_data")) {
 
 
 #### Test data ####
-
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
+# Test if the dataset has 1000 rows
+if (nrow(simulated_data) == 1000) {
+  message("Test Passed: The dataset has 1000 rows.")
 } else {
-  stop("Test Failed: The dataset does not have 151 rows.")
+  stop("Test Failed: The dataset does not have 1000 rows.")
 }
 
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
+# Test if the dataset has 4 columns
+if (ncol(simulated_data) == 4) {
+  message("Test Passed: The dataset has 4 columns.")
 } else {
-  stop("Test Failed: The dataset does not have 3 columns.")
+  stop("Test Failed: The dataset does not have 4 columns.")
 }
 
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
+# Check if the 'Municipality' column contains only valid types
+valid_municipalities <- c("Town", "City", "Village")
+if (all(simulated_data$Municipality %in% valid_municipalities)) {
+  message("Test Passed: The 'Municipality' column contains only valid types.")
 } else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
+  stop("Test Failed: The 'Municipality' column contains invalid types.")
 }
 
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
-
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
+# Check if the 'SD.FO.Status' column contains only valid types
+valid_sd_fo_status <- c("SD", "FO", "N")
+if (all(simulated_data$SD.FO.Status %in% valid_sd_fo_status)) {
+  message("Test Passed: The 'SD.FO.Status' column contains only valid types.")
 } else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
-
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
+  stop("Test Failed: The 'SD.FO.Status' column contains invalid types.")
 }
 
 # Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
+if (all(!is.na(simulated_data))) {
   message("Test Passed: The dataset contains no missing values.")
 } else {
   stop("Test Failed: The dataset contains missing values.")
 }
 
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
+# Check if there are no empty strings in 'Municipality' and 'SD.FO.Status' columns
+if (all(simulated_data$Municipality != "" & simulated_data$SD.FO.Status != "")) {
+  message("Test Passed: There are no empty strings in the 'Municipality' or 'SD.FO.Status' columns.")
 } else {
   stop("Test Failed: There are empty strings in one or more columns.")
 }
 
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
+# Check if the 'SD.FO.Status' column has three unique values
+if (n_distinct(simulated_data$SD.FO.Status) == 3) {
+  message("Test Passed: The 'SD.FO.Status' column has three unique values.")
 } else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
+  stop("Test Failed: The 'SD.FO.Status' column does not have three unique values.")
 }
+
+# Check if the 'Municipality' column has three unique values
+if (n_distinct(simulated_data$Municipality) == 3) {
+  message("Test Passed: The 'Municipality' column has three unique values.")
+} else {
+  stop("Test Failed: The 'Municipality' column does not have three unique values.")
+}
+
+# Check if values in 'AgeAtInspection' column are all greater than zero
+if (all(simulated_data$AgeAtInspection > 0)) {
+  message("Test Passed: All values in 'AgeAtInspection' are greater than zero.")
+} else {
+  stop("Test Failed: Some values in 'AgeAtInspection' are not greater than zero.")
+}
+
+# Check if values in 'Condition' column are all greater than zero
+if (all(simulated_data$Condition > 0)) {
+  message("Test Passed: All values in 'Condition' are greater than zero.")
+} else {
+  stop("Test Failed: Some values in 'Condition' are not greater than zero.")
+}
+
+# Check if all values in the 'AgeAtInspection' column are not integers
+if (all(simulated_bridges$AgeAtInspection %% 1 != 0)) {
+  message("Test Passed: All values in 'AgeAtInspection' are not integers.")
+} else {
+  stop("Test Failed: Some values in 'AgeAtInspection' are integers.")
+}
+
+# Check if all values in the 'Condition' column are not integers
+if (all(simulated_bridges$Condition %% 1 != 0)) {
+  message("Test Passed: All values in 'Condition' are not integers.")
+} else {
+  stop("Test Failed: Some values in 'Condition' are integers.")
+}
+
