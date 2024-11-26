@@ -29,9 +29,9 @@ n <- 1000
 simulated_bridges <- tibble(
   Municipality = sample(municipality, n, replace = TRUE, prob = municipality_probs),
   SD.FO.Status = sample(SD_FO_Status, n, replace = TRUE, prob = sd_fo_status_probs),
-  AgeAtInspection = round(rexp(n, rate = 0.05)), 
-  #Expected more bridges to be constructed recently; use an exponential distribution to simulate, as it favors smaller numbers.
-  Condition = round(runif(n, 1, 7), 1) # Random condition scores (1-7)
+  AgeAtInspection = rexp(n, rate = 0.05), 
+  #Expected more bridges to be constructed recently; use an exponential distribution to simulate, as it favors smaller numbers and and inherently generates values strictly greater than zero.
+  Condition = runif(n, 1, 7) # Random condition scores (1-7)
 )
 
 
