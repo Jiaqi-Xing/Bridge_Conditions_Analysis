@@ -18,12 +18,11 @@ set.seed(811)
 municipality <- c("City", "Town", "Village")
 
 # SD.FO.Status
-SD_FO_Status <- c("N", "SD", "OF")
+SD_FO_Status <- c("N", "SD", "FO") #bridge is considered structurally deficient (SD), functionally obsolete (FO), or neither (N) 
 
 # Predict probabilities for Municipality and SD.FO.Status
 municipality_probs <- c(City = 0.5, Town = 0.3, Village = 0.2)
-sd_fo_status_probs <- c(N = 0.6, SD = 0.2, FO = 0.2) #bridge is considered structurally deficient (SD), functionally obsolete (FO), or neither (N) 
-
+sd_fo_status_probs <- c(N = 0.6, SD = 0.2, FO = 0.2) 
 
 # Create a dataset by randomly assigning municipality, SD.FO.Status, AgeAtInspection and SD.FO. status to 1000 bridges
 n <- 1000
@@ -34,7 +33,6 @@ simulated_bridges <- tibble(
   #Expected more bridges to be constructed recently; use an exponential distribution to simulate, as it favors smaller numbers.
   Condition = round(runif(n, 1, 7), 1) # Random condition scores (1-7)
 )
-
 
 
 #### Save data ####
