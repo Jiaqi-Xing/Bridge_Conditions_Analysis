@@ -16,7 +16,7 @@ library(arrow)
 
 # Read the data 
 raw_data <- read_delim(
-  file = "data/01-raw_data/raw_bridge_conditions_data.txt",
+  file = "data/01-raw_data/raw_bridge_condition_data.txt",
   delim = "\t",              # Tab delimiter
   na = c("", "NA"),          # Treat blanks as NA
   trim_ws = TRUE,            # Trim whitespace
