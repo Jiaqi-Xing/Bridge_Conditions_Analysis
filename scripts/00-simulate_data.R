@@ -1,52 +1,40 @@
 #### Preamble ####
-# Purpose: Simulates a dataset of Australian electoral divisions, including the 
-  #state and party that won each division.
-# Author: Rohan Alexander
-# Date: 26 September 2024
-# Contact: rohan.alexander@utoronto.ca
+# Purpose: Simulates a dataset of Bridge Condition data
+# Author: Ariel Xing
+# Date: 25 November 2024
+# Contact: ariel.xing@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed
-# Any other information needed? Make sure you are in the `starter_folder` rproj
+# Any other information needed? Make sure you are in the `Bridge_Condition_Analysis` rproj
 
 
 #### Workspace setup ####
 library(tidyverse)
-set.seed(853)
+set.seed(811)
 
 
 #### Simulate data ####
-# State names
-states <- c(
-  "New South Wales",
-  "Victoria",
-  "Queensland",
-  "South Australia",
-  "Western Australia",
-  "Tasmania",
-  "Northern Territory",
-  "Australian Capital Territory"
+# Municipality
+municipality <- c("City", "Town", "Village")
+
+# SD.FO.Status
+SD_FO_Status <- c("N", "SD", "OF")
+
+# Predict probabilities for Municipality and SD.FO.Status
+municipality_probs <- c(City = 0.5, Town = 0.3, Village = 0.2)
+sd_fo_status_probs <- c(N = 0.6, SD = 0.2, FO = 0.2)
+
+
+# Create a dataset by randomly assigning municipality, SD.FO.Status, AgeAtInspection and SD.FO. status to 1000 bridges
+n <- 1000
+simulated_bridges <- tibble(
+  Municipality = sample(municipality, n, replace = TRUE, prob = municipality_probs),
+  SD.FO.Status = sample(SD_FO_Status, n, replace = TRUE, prob = sd_fo_status_probs),
+  AgeAtInspection = round(rexp(n, rate = 0.05)), # Exponential distribution favors younger ages
+  Condition = round(runif(n, 1, 7), 1) # Random condition scores (1-7)
 )
 
-# Political parties
-parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-# Create a dataset by randomly assigning states and parties to divisions
-analysis_data <- tibble(
-  division = paste("Division", 1:151),  # Add "Division" to make it a character
-  state = sample(
-    states,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.25, 0.25, 0.15, 0.1, 0.1, 0.1, 0.025, 0.025) # Rough state population distribution
-  ),
-  party = sample(
-    parties,
-    size = 151,
-    replace = TRUE,
-    prob = c(0.40, 0.40, 0.05, 0.1, 0.05) # Rough party distribution
-  )
-)
 
 
 #### Save data ####
-write_csv(analysis_data, "data/00-simulated_data/simulated_data.csv")
+write_csv(simulated_bridges, "data/00-simulated_data/simulated_bridge_condition_data.csv")
