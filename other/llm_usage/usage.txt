@@ -142,7 +142,55 @@ cleaned_data_loaded <- read_parquet("cleaned_data.parquet")
 head(cleaned_data_loaded)
 Let me know if you encounter any issues!
 
+User
+Give me code to simulate data with variables: County, Municipality,  Condition, AgeAtInspection, SD.FO.Status
+ChatGPT said:
+ChatGPT
+Here is the R code to simulate data with the specified variables: County, Municipality, Condition, AgeAtInspection, and SD.FO.Status.
 
+R Code to Simulate Data
+R
+Copy code
+# Load required library
+library(dplyr)
+
+# Set seed for reproducibility
+set.seed(123)
+
+# Define the number of rows for the simulated dataset
+n <- 17504  # Adjust based on your dataset size
+
+# Simulate dataset
+simulated_data <- data.frame(
+  County = sample(c("Albany", "Westchester", "Suffolk", "Onondaga", "Erie"), n, replace = TRUE),
+  Municipality = sample(c("Town", "City", "Village"), n, replace = TRUE),
+  Condition = round(runif(n, 1, 10), 1),  # Condition scores (1-10)
+  AgeAtInspection = sample(1:100, n, replace = TRUE),  # Bridge age at inspection (1-100 years)
+  SD.FO.Status = sample(c("Structurally Deficient", "Functionally Obsolete", "Adequate"), n, replace = TRUE)
+)
+
+# View the structure of the simulated dataset
+glimpse(simulated_data)
+
+# Save the simulated data (optional)
+write.csv(simulated_data, "simulated_bridge_conditions.csv", row.names = FALSE)
+Explanation of Variables
+County:
+Randomly assigns one of five example counties (replace with real counties if needed).
+Municipality:
+Randomly assigns one of three types: "Town," "City," or "Village."
+Condition:
+Simulates a numerical condition score between 1 and 10, rounded to one decimal place.
+AgeAtInspection:
+Represents the bridge's age at the time of inspection, randomly assigned between 1 and 100 years.
+SD.FO.Status:
+Randomly assigns one of three structural statuses: "Structurally Deficient," "Functionally Obsolete," or "Adequate."
+Notes
+Adjust Distributions:
+For more realistic data, modify the distributions (e.g., older bridges may have lower Condition scores).
+Save the Dataset:
+The write.csv() function is included to save the simulated dataset if needed.
+Let me know if you want to refine or expand the simulation!
 
 
 
