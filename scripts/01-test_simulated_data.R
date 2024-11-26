@@ -12,6 +12,7 @@
 
 #### Workspace setup ####
 library(tidyverse)
+library(validate)
 
 simulated_data <- read_csv("data/00-simulated_data/simulated_bridge_condition_data.csv")
 
@@ -24,89 +25,25 @@ if (exists("simulated_data")) {
 
 
 #### Test data ####
-# Test if the dataset has 1000 rows
-if (nrow(simulated_data) == 1000) {
-  message("Test Passed: The dataset has 1000 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 1000 rows.")
-}
+rules <- validator(
+  exists("simulated_data"),                                      # Test if the dataset was successfully loaded
+  nrow(simulated_data) == 1000,                                  # Dataset must have 1000 rows
+  ncol(simulated_data) == 4,                                     # Dataset must have 4 columns
+  all(simulated_data$Municipality %in% c("Town", "City", "Village")), # Valid Municipality types
+  all(simulated_data$SD.FO.Status %in% c("SD", "FO", "N")),      # Valid SD.FO.Status types
+  all(!is.na(simulated_data)),                                   # No missing values
+  all(simulated_data$Municipality != "" & simulated_data$SD.FO.Status != ""), # No empty strings in specific columns
+  n_distinct(simulated_data$SD.FO.Status) == 3,                  # SD.FO.Status must have 3 unique values
+  n_distinct(simulated_data$Municipality) == 3,                  # Municipality must have 3 unique values
+  all(simulated_data$AgeAtInspection > 0),                       # AgeAtInspection > 0
+  all(simulated_data$Condition > 0),                             # Condition > 0
+  all(simulated_data$AgeAtInspection %% 1 != 0),                 # AgeAtInspection must not contain integers
+  all(simulated_data$Condition %% 1 != 0)                        # Condition must not contain integers
+)
 
-# Test if the dataset has 4 columns
-if (ncol(simulated_data) == 4) {
-  message("Test Passed: The dataset has 4 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 4 columns.")
-}
+# Evaluate the rules
+results <- confront(simulated_data, rules)
 
-# Check if the 'Municipality' column contains only valid types
-valid_municipalities <- c("Town", "City", "Village")
-if (all(simulated_data$Municipality %in% valid_municipalities)) {
-  message("Test Passed: The 'Municipality' column contains only valid types.")
-} else {
-  stop("Test Failed: The 'Municipality' column contains invalid types.")
-}
-
-# Check if the 'SD.FO.Status' column contains only valid types
-valid_sd_fo_status <- c("SD", "FO", "N")
-if (all(simulated_data$SD.FO.Status %in% valid_sd_fo_status)) {
-  message("Test Passed: The 'SD.FO.Status' column contains only valid types.")
-} else {
-  stop("Test Failed: The 'SD.FO.Status' column contains invalid types.")
-}
-
-# Check if there are any missing values in the dataset
-if (all(!is.na(simulated_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
-
-# Check if there are no empty strings in 'Municipality' and 'SD.FO.Status' columns
-if (all(simulated_data$Municipality != "" & simulated_data$SD.FO.Status != "")) {
-  message("Test Passed: There are no empty strings in the 'Municipality' or 'SD.FO.Status' columns.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
-
-# Check if the 'SD.FO.Status' column has three unique values
-if (n_distinct(simulated_data$SD.FO.Status) == 3) {
-  message("Test Passed: The 'SD.FO.Status' column has three unique values.")
-} else {
-  stop("Test Failed: The 'SD.FO.Status' column does not have three unique values.")
-}
-
-# Check if the 'Municipality' column has three unique values
-if (n_distinct(simulated_data$Municipality) == 3) {
-  message("Test Passed: The 'Municipality' column has three unique values.")
-} else {
-  stop("Test Failed: The 'Municipality' column does not have three unique values.")
-}
-
-# Check if values in 'AgeAtInspection' column are all greater than zero
-if (all(simulated_data$AgeAtInspection > 0)) {
-  message("Test Passed: All values in 'AgeAtInspection' are greater than zero.")
-} else {
-  stop("Test Failed: Some values in 'AgeAtInspection' are not greater than zero.")
-}
-
-# Check if values in 'Condition' column are all greater than zero
-if (all(simulated_data$Condition > 0)) {
-  message("Test Passed: All values in 'Condition' are greater than zero.")
-} else {
-  stop("Test Failed: Some values in 'Condition' are not greater than zero.")
-}
-
-# Check if all values in the 'AgeAtInspection' column are not integers
-if (all(simulated_bridges$AgeAtInspection %% 1 != 0)) {
-  message("Test Passed: All values in 'AgeAtInspection' are not integers.")
-} else {
-  stop("Test Failed: Some values in 'AgeAtInspection' are integers.")
-}
-
-# Check if all values in the 'Condition' column are not integers
-if (all(simulated_bridges$Condition %% 1 != 0)) {
-  message("Test Passed: All values in 'Condition' are not integers.")
-} else {
-  stop("Test Failed: Some values in 'Condition' are integers.")
-}
+# Print a summary of the validation results
+summary(results)
 
