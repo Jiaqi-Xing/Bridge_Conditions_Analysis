@@ -494,4 +494,39 @@ Run the script in R, and the validation results will show which tests passed or 
 Use violations(results) to investigate any failures further.
 This approach is sophisticated, concise, and aligned with the requirements of high-quality validation testing. Let me know if you need further enhancements!
 
+User:
+There are some variations like "Villag," "Villa," etc., that should all be standardized to "Village." How can I handle this?
 
+ChatGPT said:
+We can use mutate with case_when to normalize these variations:
+
+R
+Copy code
+raw_data <- raw_data %>%
+  mutate(
+    Municipality = case_when(
+      str_detect(LastWord, "^(Villag|Villa|Vil|V|Vill|Vi)$") ~ "Village",  
+      TRUE ~ Municipality  
+    )
+  )
+Variations matching the regex will be replaced with "Village".
+All other values remain unchanged.
+ 
+User
+What should I do if the last word is "P" or "Pt"? These aren’t valid, and I want to replace them with the word before.
+
+ChatGPT said:
+You can use regex to extract the word before P or Pt and replace the Municipality value:
+
+R
+Copy code
+raw_data <- raw_data %>%
+  mutate(
+    Municipality = case_when(
+      str_detect(LastWord, "\\b(P|Pt)$") ~ str_extract(Municipality, ".*\\b(\\w+)\\b (?=P|Pt)"),  
+      TRUE ~ Municipality  
+    )
+  )
+This replaces P or Pt with the preceding word.
+Other values remain unaffected.
+Step 5: Final Cleaning and Filtering
