@@ -29,7 +29,7 @@ raw_data$Municipality <- str_extract(raw_data$Municipality, "\\w+$")
 # Extract useful columns and remove N/A
 cleaned_data <- raw_data %>%
   filter(AgeAtInspection > 0) %>%
-  select(County, Municipality, Condition, AgeAtInspection, SD.FO.Status) %>%
+  select(Municipality, Condition, AgeAtInspection, SD.FO.Status) %>%
   drop_na()
 
 #### Save data ####
