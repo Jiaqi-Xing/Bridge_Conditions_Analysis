@@ -37,8 +37,8 @@ rules <- validator(
   n_distinct(simulated_data$Municipality) == 3,                  # Municipality must have 3 unique values
   all(simulated_data$AgeAtInspection > 0),                       # AgeAtInspection > 0
   all(simulated_data$Condition > 0),                             # Condition > 0
-  all(simulated_data$AgeAtInspection %% 1 != 0),                 # AgeAtInspection must not contain integers
-  all(simulated_data$Condition %% 1 != 0)                        # Condition must not contain integers
+  all(simulated_data$AgeAtInspection %% 1 != 0),                 # AgeAtInspection must be float
+  all(simulated_data$Condition %% 1 != 0)                        # Condition must be float
 )
 
 # Evaluate the rules
