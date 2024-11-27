@@ -26,12 +26,12 @@ rules <- validator(
   nrow(cleaned_data) > 0,                                  # Dataset must have rows
   all(!is.na(cleaned_data)),                               # No missing values in any column
   ncol(cleaned_data) >= 4,                                 # Ensure at least 4 columns exist
-  all(cleaned_data$Municipality %in% c("Town", "City", "Village")), # Valid Municipality values
-  all(cleaned_data$SD.FO.Status %in% c("N", "SD", "FO")),  # Valid SD.FO.Status values
+  all(cleaned_data$Located_Municipality %in% c("Town", "City", "Village")), # Valid Located_Municipality values
+  all(cleaned_data$Owner_Group %in% c("NYSDOT", "Municipalities", "Other")), # Valid Owner_Group values
   all(cleaned_data$AgeAtInspection > 0),                   # AgeAtInspection must be > 0
   all(cleaned_data$Condition >= 1 & cleaned_data$Condition <= 7), # Condition must be between 1 and 7
-  n_distinct(cleaned_data$Municipality) == 3,              # Municipality column should have 3 unique values
-  n_distinct(cleaned_data$SD.FO.Status) == 3               # SD.FO.Status column should have 3 unique values
+  n_distinct(cleaned_data$Located_Municipality) == 3,      # Located_Municipality should have 3 unique values
+  n_distinct(cleaned_data$Owner_Group) == 3                # Owner_Group should have 3 unique values
 )
 
 # Evaluate the rules
@@ -39,11 +39,3 @@ results <- confront(cleaned_data, rules)
 
 # Print summary of the validation results
 summary(results)
-
-# Show detailed violations (if any)
-violations(results)
-
-unique_municipalities <- unique(cleaned_data$Municipality)
-
-# Print the unique Municipality values
-print(unique_municipalities)
