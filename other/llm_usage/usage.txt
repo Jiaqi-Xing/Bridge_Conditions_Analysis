@@ -193,340 +193,131 @@ The write.csv() function is included to save the simulated dataset if needed.
 Let me know if you want to refine or expand the simulation!
 
 User
-# Check if the dataset has 1000 rows # Check if the dataset has 4 columns # Check if the 'Municipality' column contains only valid types # Check if the 'SD.FO.Status' column contains only valid types# Check if there are any missing values in the dataset# Check if there are no empty strings in 'Municipality, 'SD.FO.Status' columns# Check if the 'SD.FO.Status' column has three unique values# Check if the 'Municipality' column has three unique values #Check if values in 'AgeAtInspection' column all grater than zero. #Check if values in 'Condition' column all grater than zero.
+this simulation doesn't seems resonable
 ChatGPT said:
 ChatGPT
-Here is the R code to implement the specified tests for your dataset:
+Thank you for pointing this out! Let’s refine the simulation to better reflect realistic patterns for bridge conditions based on your dataset. Here’s an analysis of why the simulation might look unreasonable and how to improve it.
 
-R Code for Testing
+Issues in the Current Simulation
+Unrealistic Variability in Condition Scores:
+
+Even bridges with very young AgeAtInspection (e.g., 2 years) have low condition scores, which seems unlikely.
+Similarly, some older bridges (e.g., 104 years) have moderate-to-high conditions, which contradicts expected deterioration over time.
+Lack of Strong Deterioration Trend:
+
+The effect of AgeAtInspection on Condition isn't sufficiently impactful in the current model.
+Owner and Municipality Effects:
+
+While the adjustments for Owner_Group and Located_Municipality are present, they may not adequately align with realistic condition patterns.
+Proposed Improvements
+Simulate a Stronger Deterioration Effect:
+
+Introduce a steeper decline in Condition as AgeAtInspection increases, with variability for better alignment with reality.
+Set Condition for Newer Bridges:
+
+Ensure that very young bridges (e.g., <10 years) have higher conditions by default.
+Add Noise to Condition:
+
+Introduce variability to reflect random real-world factors, such as maintenance or traffic, but within reasonable bounds.
+Scale Effects of Municipality and Owner:
+
+Amplify or fine-tune the adjustments for Located_Municipality and Owner_Group.
+Updated Simulation Code
 R
 Copy code
-# Load necessary libraries
-library(dplyr)
-library(readr)
-
-# Load the simulated dataset
-simulated_data <- read_csv("path/to/simulated_bridge_condition_data.csv")
-
-# Test if the dataset has 1000 rows
-if (nrow(simulated_data) == 1000) {
-  message("Test Passed: The dataset has 1000 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 1000 rows.")
-}
-
-# Test if the dataset has 4 columns
-if (ncol(simulated_data) == 4) {
-  message("Test Passed: The dataset has 4 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 4 columns.")
-}
-
-# Check if the 'Municipality' column contains only valid types
-valid_municipalities <- c("Town", "City", "Village")
-if (all(simulated_data$Municipality %in% valid_municipalities)) {
-  message("Test Passed: The 'Municipality' column contains only valid types.")
-} else {
-  stop("Test Failed: The 'Municipality' column contains invalid types.")
-}
-
-# Check if the 'SD.FO.Status' column contains only valid types
-valid_sd_fo_status <- c("Structurally Deficient", "Functionally Obsolete", "Adequate")
-if (all(simulated_data$SD.FO.Status %in% valid_sd_fo_status)) {
-  message("Test Passed: The 'SD.FO.Status' column contains only valid types.")
-} else {
-  stop("Test Failed: The 'SD.FO.Status' column contains invalid types.")
-}
-
-# Check if there are any missing values in the dataset
-if (all(!is.na(simulated_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
-
-# Check if there are no empty strings in 'Municipality' and 'SD.FO.Status' columns
-if (all(simulated_data$Municipality != "" & simulated_data$SD.FO.Status != "")) {
-  message("Test Passed: There are no empty strings in the 'Municipality' or 'SD.FO.Status' columns.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
-
-# Check if the 'SD.FO.Status' column has three unique values
-if (n_distinct(simulated_data$SD.FO.Status) == 3) {
-  message("Test Passed: The 'SD.FO.Status' column has three unique values.")
-} else {
-  stop("Test Failed: The 'SD.FO.Status' column does not have three unique values.")
-}
-
-# Check if the 'Municipality' column has three unique values
-if (n_distinct(simulated_data$Municipality) == 3) {
-  message("Test Passed: The 'Municipality' column has three unique values.")
-} else {
-  stop("Test Failed: The 'Municipality' column does not have three unique values.")
-}
-
-# Check if values in 'AgeAtInspection' column are all greater than zero
-if (all(simulated_data$AgeAtInspection > 0)) {
-  message("Test Passed: All values in 'AgeAtInspection' are greater than zero.")
-} else {
-  stop("Test Failed: Some values in 'AgeAtInspection' are not greater than zero.")
-}
-
-# Check if values in 'Condition' column are all greater than zero
-if (all(simulated_data$Condition > 0)) {
-  message("Test Passed: All values in 'Condition' are greater than zero.")
-} else {
-  stop("Test Failed: Some values in 'Condition' are not greater than zero.")
-}
-How to Use
-Replace "path/to/simulated_bridge_condition_data.csv" with the correct file path.
-Run the script, and it will output "Test Passed" or "Test Failed" messages for each test.
-What Each Test Does
-Ensures the dataset has exactly 1000 rows.
-Ensures the dataset has exactly 4 columns.
-Validates that Municipality contains only "Town," "City," or "Village."
-Validates that SD.FO.Status contains only "Structurally Deficient," "Functionally Obsolete," or "Adequate."
-Confirms no missing values exist.
-Confirms no empty strings in Municipality and SD.FO.Status.
-Ensures SD.FO.Status has three unique categories.
-Ensures Municipality has three unique categories.
-Verifies all AgeAtInspection values are greater than 0.
-Verifies all Condition values are greater than 0.
-This code provides a comprehensive check for the integrity of your dataset. Let me know if you need further enhancements!
-
-User
-#check values in column "ageatinspection" are not integers
-ChatGPT said:
-ChatGPT
-Here is the R code to check if all values in the AgeAtInspection column are not integers:
-
-R
-Copy code
-# Check if all values in the 'AgeAtInspection' column are not integers
-if (all(simulated_bridges$AgeAtInspection %% 1 != 0)) {
-  message("Test Passed: All values in 'AgeAtInspection' are not integers.")
-} else {
-  stop("Test Failed: Some values in 'AgeAtInspection' are integers.")
-}
-Explanation:
-%% 1 != 0:
-
-The modulo operator (%%) checks the remainder when dividing a number by 1.
-If the remainder is not 0, the value is not an integer.
-all():
-
-Ensures that every value in the column meets the condition of not being an integer.
-Test Logic:
-
-If all values in the column are non-integers, the test passes.
-If any value is an integer, the test fails.
-This test will ensure that AgeAtInspection contains only floating-point numbers. Let me know if further clarification is needed!
-
-User
-# Test if the data was successfully loaded
-if (exists("simulated_data")) {
-  message("Test Passed: The dataset was successfully loaded.")
-} else {
-  stop("Test Failed: The dataset could not be loaded.")
-}
+#### Preamble ####
+# Purpose: Simulates a dataset of Bridge Condition data with updated explanatory variables
+# Author: Ariel Xing
+# Date: 25 November 2024
+# Contact: ariel.xing@mail.utoronto.ca
+# License: MIT
+# Pre-requisites: The `tidyverse` package must be installed
+# Notes: Make sure you are in the `NYS_Bridge_Condition_Analysis` rproj
 
 
-#### Test data ####
-# Test if the dataset has 1000 rows
-if (nrow(simulated_data) == 1000) {
-  message("Test Passed: The dataset has 1000 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 1000 rows.")
-}
-
-# Test if the dataset has 4 columns
-if (ncol(simulated_data) == 4) {
-  message("Test Passed: The dataset has 4 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 4 columns.")
-}
-
-# Check if the 'Municipality' column contains only valid types
-valid_municipalities <- c("Town", "City", "Village")
-if (all(simulated_data$Municipality %in% valid_municipalities)) {
-  message("Test Passed: The 'Municipality' column contains only valid types.")
-} else {
-  stop("Test Failed: The 'Municipality' column contains invalid types.")
-}
-
-# Check if the 'SD.FO.Status' column contains only valid types
-valid_sd_fo_status <- c("SD", "FO", "N")
-if (all(simulated_data$SD.FO.Status %in% valid_sd_fo_status)) {
-  message("Test Passed: The 'SD.FO.Status' column contains only valid types.")
-} else {
-  stop("Test Failed: The 'SD.FO.Status' column contains invalid types.")
-}
-
-# Check if there are any missing values in the dataset
-if (all(!is.na(simulated_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
-
-# Check if there are no empty strings in 'Municipality' and 'SD.FO.Status' columns
-if (all(simulated_data$Municipality != "" & simulated_data$SD.FO.Status != "")) {
-  message("Test Passed: There are no empty strings in the 'Municipality' or 'SD.FO.Status' columns.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
-
-# Check if the 'SD.FO.Status' column has three unique values
-if (n_distinct(simulated_data$SD.FO.Status) == 3) {
-  message("Test Passed: The 'SD.FO.Status' column has three unique values.")
-} else {
-  stop("Test Failed: The 'SD.FO.Status' column does not have three unique values.")
-}
-
-# Check if the 'Municipality' column has three unique values
-if (n_distinct(simulated_data$Municipality) == 3) {
-  message("Test Passed: The 'Municipality' column has three unique values.")
-} else {
-  stop("Test Failed: The 'Municipality' column does not have three unique values.")
-}
-
-# Check if values in 'AgeAtInspection' column are all greater than zero
-if (all(simulated_data$AgeAtInspection > 0)) {
-  message("Test Passed: All values in 'AgeAtInspection' are greater than zero.")
-} else {
-  stop("Test Failed: Some values in 'AgeAtInspection' are not greater than zero.")
-}
-
-# Check if values in 'Condition' column are all greater than zero
-if (all(simulated_data$Condition > 0)) {
-  message("Test Passed: All values in 'Condition' are greater than zero.")
-} else {
-  stop("Test Failed: Some values in 'Condition' are not greater than zero.")
-}
-
-# Check if all values in the 'AgeAtInspection' column are not integers
-if (all(simulated_bridges$AgeAtInspection %% 1 != 0)) {
-  message("Test Passed: All values in 'AgeAtInspection' are not integers.")
-} else {
-  stop("Test Failed: Some values in 'AgeAtInspection' are integers.")
-}
-
-# Check if all values in the 'Condition' column are not integers
-if (all(simulated_bridges$Condition %% 1 != 0)) {
-  message("Test Passed: All values in 'Condition' are not integers.")
-} else {
-  stop("Test Failed: Some values in 'Condition' are integers.")
-}
-convert these to validate code
+#### Workspace setup ####
+library(tidyverse)
+set.seed(811)  # Ensures reproducibility
 
 
-2/2
+#### Simulate data ####
 
-ChatGPT said:
-ChatGPT
-Here’s how to rewrite the provided test script using the validate package for declarative data validation:
+# Define categories for explanatory variables
+located_municipality <- c("City", "Town", "Village")  # Types of municipalities
+owner_group <- c("NYSDOT", "Municipalities", "Other")  # Categories of bridge owners:
+# - NYSDOT: Bridges owned by the New York State Department of Transportation
+# - Municipalities: Bridges owned by local governments (City, Town, Village)
+# - Other: Bridges owned by private entities, commissions, or other state authorities
 
-Validation Script Using validate
-R
-Copy code
-library(validate)
+# Define probabilities for categories
+located_municipality_probs <- c(City = 0.5, Town = 0.3, Village = 0.2)  # Probability for each municipality
+owner_group_probs <- c(NYSDOT = 0.4, Municipalities = 0.5, Other = 0.1)  # Probability for each owner group
 
-# Load the dataset
-simulated_data <- read.csv("data/00-simulated_data/simulated_bridge_condition_data.csv")
+# Number of bridges
+n <- 1000
 
-# Define validation rules
-rules <- validator(
-  exists("simulated_data"),                                      # Test if the dataset was successfully loaded
-  nrow(simulated_data) == 1000,                                  # Dataset must have 1000 rows
-  ncol(simulated_data) == 4,                                     # Dataset must have 4 columns
-  all(simulated_data$Municipality %in% c("Town", "City", "Village")), # Valid Municipality types
-  all(simulated_data$SD.FO.Status %in% c("SD", "FO", "N")),      # Valid SD.FO.Status types
-  all(!is.na(simulated_data)),                                   # No missing values
-  all(simulated_data$Municipality != "" & simulated_data$SD.FO.Status != ""), # No empty strings in specific columns
-  n_distinct(simulated_data$SD.FO.Status) == 3,                  # SD.FO.Status must have 3 unique values
-  n_distinct(simulated_data$Municipality) == 3,                  # Municipality must have 3 unique values
-  all(simulated_data$AgeAtInspection > 0),                       # AgeAtInspection > 0
-  all(simulated_data$Condition > 0),                             # Condition > 0
-  all(simulated_data$AgeAtInspection %% 1 != 0),                 # AgeAtInspection must not contain integers
-  all(simulated_data$Condition %% 1 != 0)                        # Condition must not contain integers
+# Create a simulated dataset
+simulated_bridges <- tibble(
+  Located_Municipality = sample(located_municipality, n, replace = TRUE, prob = located_municipality_probs),  # Random assignment of municipality
+  Owner_Group = sample(owner_group, n, replace = TRUE, prob = owner_group_probs),  # Random assignment of owner group
+  AgeAtInspection = c(
+    rexp(n * 0.8, rate = 0.05),  # Cluster most bridges at younger ages
+    runif(n * 0.2, min = 50, max = 100)  # Include older bridges in smaller numbers
+  )[1:n]  # Ensure the total number of rows matches `n`
 )
 
-# Evaluate the rules
-results <- confront(simulated_data, rules)
+# Simulate Condition based on AgeAtInspection with noise
+simulated_bridges <- simulated_bridges %>%
+  mutate(
+    Condition = 7 - (AgeAtInspection / 20) +  # Steady deterioration with age
+      rnorm(n, mean = 0, sd = 0.5),  # Add random noise for variability
+    Condition = Condition + case_when(
+      Owner_Group == "NYSDOT" ~ -0.3,  # Slightly worse conditions for NYSDOT-owned bridges
+      Owner_Group == "Municipalities" ~ 0.2,  # Slightly better conditions for Municipalities
+      TRUE ~ 0  # No adjustment for Other
+    ),
+    Condition = Condition + case_when(
+      Located_Municipality == "City" ~ -0.2,  # Slightly worse conditions for city bridges
+      Located_Municipality == "Village" ~ 0.3,  # Slightly better conditions for village bridges
+      TRUE ~ 0  # No adjustment for Town
+    ),
+    Condition = pmax(pmin(Condition, 7), 1)  # Ensure condition values stay within the 1-7 range
+  )
 
-# Print a summary of the validation results
-summary(results)
 
-# Show detailed violations (if any)
-violations(results)
-Key Notes
-validator():
+#### Save data ####
 
-Contains the declarative rules for each test case.
-Each rule is written as an R expression, making the logic clear and easy to modify.
-confront():
+# Save the simulated dataset as a CSV file
+write_csv(simulated_bridges, "data/00-simulated_data/simulated_bridge_condition_data.csv")
+Key Updates
+Condition Simulation:
 
-Applies the validation rules to the dataset and returns results for evaluation.
-summary(results):
-
-Provides a summary of the validation results, including pass/fail counts.
-violations(results):
-
-Shows detailed information about any validation failures.
-Example Output
-If all tests pass:
-
-plaintext
-Copy code
-Object of class 'validation'
-Call:
- validator(.data = simulated_data)
-
-Confrontations: 12
-Pass: 12
-Fail: 0
-If any tests fail, the summary and violations will indicate which rule failed and provide detailed diagnostics.
-
-How to Use
-Save this script as validate_simulated_data.R.
-Run the script in R, and the validation results will show which tests passed or failed.
-Use violations(results) to investigate any failures further.
-This approach is sophisticated, concise, and aligned with the requirements of high-quality validation testing. Let me know if you need further enhancements!
-
-User:
-There are some variations like "Villag," "Villa," etc., that should all be standardized to "Village." How can I handle this?
-
-ChatGPT said:
-We can use mutate with case_when to normalize these variations:
-
+Condition starts at 7 for new bridges and deteriorates proportionally to AgeAtInspection using the formula:
 R
 Copy code
-raw_data <- raw_data %>%
-  mutate(
-    Municipality = case_when(
-      str_detect(LastWord, "^(Villag|Villa|Vil|V|Vill|Vi)$") ~ "Village",  
-      TRUE ~ Municipality  
-    )
-  )
-Variations matching the regex will be replaced with "Village".
-All other values remain unchanged.
- 
-User
-What should I do if the last word is "P" or "Pt"? These aren’t valid, and I want to replace them with the word before.
+Condition = 7 - (AgeAtInspection / 20)
+Added random noise with rnorm to introduce realistic variability without creating unrealistic extremes.
+Adjusted Effects of Owner and Municipality:
 
-ChatGPT said:
-You can use regex to extract the word before P or Pt and replace the Municipality value:
+Slightly amplified effects:
+NYSDOT: Worse conditions (-0.3).
+Village: Better conditions (+0.3).
+Clamped Values:
 
-R
-Copy code
-raw_data <- raw_data %>%
-  mutate(
-    Municipality = case_when(
-      str_detect(LastWord, "\\b(P|Pt)$") ~ str_extract(Municipality, ".*\\b(\\w+)\\b (?=P|Pt)"),  
-      TRUE ~ Municipality  
-    )
-  )
-This replaces P or Pt with the preceding word.
-Other values remain unaffected.
-Step 5: Final Cleaning and Filtering
+Ensured all Condition values remain between 1 and 7.
+Age Simulation:
+
+Maintained the exponential distribution for young bridges and a small proportion of older bridges.
+Expected Outcomes
+Stronger Deterioration with Age:
+
+Older bridges will consistently show lower conditions, reflecting real-world trends.
+Realistic Variability:
+
+Noise introduces subtle differences in condition scores, making the data look more natural.
+Municipality and Owner Trends:
+
+Village bridges and those owned by Municipalities will tend to have better conditions, while NYSDOT and City bridges fare slightly worse.
+Let me know how this works for your needs or if you'd like further tweaks!
+
+
