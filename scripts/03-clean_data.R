@@ -42,7 +42,7 @@ raw_data <- raw_data %>%
   mutate(Owner_Group = case_when(
     Owner == "NYSDOT" ~ "NYSDOT",  # Leave NYSDOT as its own category
     Owner %in% c("County", "Town", "City", "Village") ~ "Municipalities",  # Group municipalities
-    TRUE ~ "other"  # Group all other small categories as "other"
+    TRUE ~ "Other"  # Group all other small categories as "other"
   ))
 
 # Filter and prepare the cleaned dataset
