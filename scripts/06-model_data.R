@@ -18,18 +18,11 @@ library(arrow)
 bridge_data <- read_parquet("data/02-analysis_data/cleaned_bridge_condition_data.parquet")
 
 ### Model data ####
-# Ensure categorical variables are treated as factors for the model
-bridge_data <- bridge_data %>%
-  mutate(Located_Municipality = as.factor(Located_Municipality),
-         Owner_Group = as.factor(Owner_Group))
-
-# Ensure AgeAtInspection is treated as a numeric variable
-bridge_data <- bridge_data %>%
-  mutate(AgeAtInspection = as.numeric(AgeAtInspection))
-
 
 # Fit a linear model with AgeAtInspection , Located_Municipality and Owner_Group
 model <- lm(Condition ~ AgeAtInspection + Located_Municipality + Owner_Group, data = bridge_data)
+
+summary(model)
 
 #### Save model ####
 # Save the model object for future use
