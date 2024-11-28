@@ -33,4 +33,4 @@ model <- lm(Condition ~ AgeAtInspection + Located_Municipality + Owner_Group, da
 
 #### Save model ####
 # Save the model object for future use
-saveRDS(model, file = "models/first_model.rds")
+saveRDS(model, file = "models/regression_model.rds")
