@@ -19,7 +19,10 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(ggplot2)
+library(arrow)
+library(knitr)
+bridge_data <- read_parquet("../data/02-analysis_data/cleaned_bridge_condition_data.parquet")
 ```
 
 
@@ -44,69 +47,194 @@ Telegraphing paragraph: The remainder of this paper is structured as follows. @s
 
 ## Overview
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
+The dataset used in this analysis, titled “New_York_Bridges_2016”, was accessed from the Data And Story Library (DASL) [@dasl_data_2016], which archives historical data originally compiled by the New York State Open Data platform [@ny_open_data_2020]. The original dataset includes contributions from county-level data provided by the New York State Department of Transportation (NYSDOT) [@county_data].
 
-The dataset, titled New_York_Bridges_2016[@2016data], was orignaly posted by[@NYS], collected by [@2016data]. Original website now are with newly updated data in 2020. This data contains detailed information about bridges in New York State. The raw dataset has 17502 rows and 13 columns, capturing structural, geographical, and condition-related aspects of 17502 bridges. After cleaning the data, we keep 4 variables for analysis, whith response variable "Condition" and three predictor variables, "AgeAtInspection"(numeric), "Located_Municipality"(categorical) and "Owner_Goup"(categorical).
+This dataset was chosen over the updated 2020 version from New York State Open Data due to the change in how bridge condition data is recorded. In the 2016 dataset, the condition variable is a continuous variable measured on a seven-point scale (1 = "Deficient Condition" to 7 = "Good Condition"). However, in the 2020 dataset, NYSDOT replaced this scale with a binary Poor/OK variable, recorded as Poor01 (1 = Poor, 0 = OK). This change limits the analytical potential of the dataset, as the binary variable lacks the granularity required for linear regression that relies on continuous variables to detect nuanced trends or incremental differences. By using the 2016 dataset, this study retains the detailed numerical condition ratings, enabling to analysis impact of factors such as age, location, and owners on bridge conditions.
+
+The raw dataset contains 17,502 rows and 13 columns, providing structural, geographical, and condition-related data on bridges across New York State. After data cleaning, four key variables were selected for analysis: the response variable “Condition” and three predictor variables, “AgeAtInspection”, “Located_Municipality”, and “Owner_Group”. The variables “Condition” and “AgeAtInspection” are numeric and were directly retained from the raw data. The categorical variables “Located_Municipality” and “Owner_Group” were newly constructed by categorizing the original variables “Municipality” and “Owner”, respectively.
 
 
+To conduct the analysis for this paper, we utilized the statistical programming language R [@citeR]. The workflow was supported by several packages, including tidyverse [@tidyverse] for data cleaning and manipulation, arrow [@arrow] for efficient data storage and retrieval, validate [@validate] for data testing and validation, knitr[@knitr] for creating tables and ggplot2 [@ggplot2] for creating visualizations.
 
-A similar dataset, New York Bridges 2020[@2020data], was considered but not used because its key variable for condition is binary (indicating whether the bridge is in poor condition or not). While this binary variable might be useful for certain analyses, it does not provide the granularity needed to fully understand bridge conditions or to assess the relationships between explanatory variables and condition scores. The 2016 dataset, by contrast, includes a numeric measure of condition, allowing for a more nuanced analysis.
 
 ## Measurement
 	
 In New York State, bridge inspectors from the State Department of Transportation (NYSDOT) conduct evaluations of non-toll bridges every two years to ensure their safety and structural integrity. Their assessments are performed on a span-by-span basis, meaning that each section of the bridge between its supporting points is inspected individually. For every bridge, inspectors examine up to 47 structural elements, including 25 span-specific components such as the deck, beams, and supports. Each component is assigned a condition score, ranging from 1 (severely deficient) to 7 (new or excellent condition), which reflects its structural health at the time of inspection. Inspectors also note any defects, such as cracks, corrosion, or wear, and document associated quantities, such as the length, area, or number of affected elements, to capture the extent of the damage.
 
-In addition to these detailed evaluations, inspectors assign federal ratings based on the overall average condition of a bridge’s major components. These federal ratings correspond to the values of the **Condition** variable used in our paper and analysis. Bridges with condition scores below 5 are classified as being in “poor” condition and are further categorized as either Structurally Deficient (SD) or Functionally Obsolete (FO). All findings from these assessments are recorded in inspection reports, providing essential data to guide maintenance, rehabilitation, or replacement efforts.
+In addition to these detailed evaluations, inspectors assign federal ratings based on the overall average condition of a bridge’s major components. These federal ratings correspond to the values of the **Condition** variable used in our paper and analysis. Bridges with condition scores below 5 are classified as being in “poor” condition and are further categorized as either Structurally Deficient (SD) or Functionally Obsolete (FO). All findings from these assessments are recorded in inspection reports, providing essential data to guide maintenance, rehabilitation, or replacement efforts.[@measurement]
 
-## Outcome variables
-
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+## Outcome Variable
+### Condition 
+The **Condition** variable reflects the overall state of a bridge, encompassing both its structural integrity and functional adequacy as determined during inspections. It is measured on a continuous scale from 1 to 7, with higher scores indicating better condition. Bridges with condition scores above 5 are considered to be in good standing, while scores below 5 indicate that a bridge may be classified as either Structurally Deficient (SD) or Functionally Obsolete (FO).
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| label: tbl-condition-summary
+#| tbl-cap: "Summary Statistics of NYS Bridge Condition Ratings"
 #| echo: false
+#| tbl-pos: "H"
 
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
+# Summary statistics for Condition
+condition_summary <- bridge_data %>%
+  summarise(
+    Min = min(Condition, na.rm = TRUE),
+    Max = max(Condition, na.rm = TRUE),
+    Mean = mean(Condition, na.rm = TRUE),
+    Median = median(Condition, na.rm = TRUE),
+    "Standard Deviation" = sd(Condition, na.rm = TRUE),
+    Count = n()
+  )
+
+# Create a table
+kable(condition_summary, format = "latex", booktabs = TRUE)
 ```
+@tbl-condition-summary presents for the condition ratings of bridges in New York State, based on a dataset of 15,855 observations. The mean condition rating of 5.38 indicates that, on average, bridges are in fair to good condition. The median rating of 5.30 suggests that half of the bridges have condition ratings below or equal to 5.30. The close alignment of the mean and median reflects a relatively symmetrical distribution. While the minimum condition rating is 1.93, and the maximum is 7, the standard deviation of 0.83 suggests that most bridges cluster around the mean, with only a few outliers at the extreme ends of the scale. These statistics indicate that the majority of bridges are maintained at a stable and adequate level, with relatively few in very poor or excellent condition.
 
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
+\newpage
 
 ```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
+#| label: fig-condition-histogram
+#| fig-cap: "Distribution of Bridge Condition Ratings"
 #| echo: false
 #| warning: false
 #| message: false
+#| Fig-pos: "H"
 
+# Create a histogram for the Condition variable
+ggplot(bridge_data, aes(x = Condition)) +
+  geom_histogram(binwidth = 0.5, fill = "skyblue", color = "black") +
+  scale_x_continuous(breaks = seq(1, 7, 1), limits = c(1, 7)) + # Ensures x-axis shows 1 to 7
+  labs(
+    x = "Condition",
+    y = "Frequency"
+  ) +
+  theme_minimal()
 ```
 
-Talk way more about it. 
+
+@fig-condition-histogram The histogram displays the distribution of bridge condition ratings in New York State. The majority of bridges are clustered around the middle to upper end of the condition scale, with relatively few bridges at either the lower or higher ends. The left tail, representing bridges in severely poor condition, is thin, indicating that such bridges are uncommon. Similarly, the right tail, corresponding to bridges in excellent condition, is sparse, suggesting that high-quality, newly constructed bridges are not predominant. The distribution highlights a concentration of bridges in moderate condition, with a gradual decrease in frequency toward both ends, reflecting the natural aging process and variability in maintenance practices across the state.
 
 ## Predictor variables
+### AgeAtInspection
+The **AgeAtInspection** variable is a continuous measure that represents the age of a bridge in years. It is calculated as the time elapsed from the year the bridge was originally built or entirely replaced to its most recent inspection date.
 
-Add graphs, tables and text.
+\newpage
+```{r}
+#| label: fig-age-histogram
+#| fig-cap: "Distribution of Bridge Ages at the Time of Inspection. The red dashed lines mark intervals of 25 years and the blue density curve provides a smooth visualization of the distribution"
+#| echo: false
+#| Fig-pos: "H"
+#| warning: false
+#| message: false
 
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+# Visualization: Histogram with mode markers and density curve
+ggplot(bridge_data, aes(x = AgeAtInspection)) +
+  geom_histogram(binwidth = 5, fill = "lightblue", color = "black", alpha = 0.7) + # Histogram
+  geom_vline(xintercept = seq(25, 150, by = 25), color = "red", linetype = "dashed", size = 0.8) + # Vertical lines for modes
+  geom_density(aes(y = ..count..), color = "blue", size = 1) + # Density curve scaled to histogram
+  labs(
+    x = "Age at Inspection (Years)",
+    y = "Frequency"
+  ) +
+  theme_minimal()
 
 
+```
+@fig-age-histogram shows distribution of bridge ages at the time of inspection, overlaid with red dashed lines and a blue density curve. The red dashed lines mark intervals of 25 years and align with clear peaks in the histogram, suggesting periodic patterns in bridge construction or major renovations. Prominent clusters are observed around 25, 50, and 75 years of age, indicating that many bridges were likely built or reconstructed during these timeframes. The blue density curve provides a smooth visualization of the distribution, confirming the periodic modes while highlighting the overall trends. Beyond 100 years, the frequency drops significantly, with very few bridges older than this still in operation, reflecting the typical lifecycle of infrastructure. The concentration of bridges between 20 and 80 years old suggests that a significant portion of bridges are mid-life and may soon require maintenance or replacement.@fig-age-histogram highlights both the historical patterns of bridge construction and the current age distribution of bridges in the dataset.
+```{r}
+#| label: fig-ageatinspection-condition
+#| fig-cap: "Relationship Between AgeAtInspection and Condition. Each blue dot represents a bridge, showing its age at the time of inspection and the corresponding condition rating obtained from that inspection."
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-pos: "H"
+
+# Visualization: Relationship between AgeAtInspection and Condition
+ggplot(bridge_data, aes(x = AgeAtInspection, y = Condition)) +
+  geom_point(alpha = 0.3, color = "blue") +
+  labs(
+    x = "Age at Inspection (Years)",
+    y = "Condition"
+  ) +
+  theme_minimal()
+```
+@fig-ageatinspection-condition illustrates the relationship between bridge age at inspection and their condition ratings. Most points are concentrated in the upper-left quadrant, showing that younger bridges tend to have higher condition ratings (close to 7). As bridge age increases, condition ratings generally decline, reflecting the expected deterioration over time. However, beyond approximately 80 to 100 years, the relationship becomes less defined, with condition ratings displaying a wide range. This variability may be influenced by differences in maintenance practices, varying levels of transportation load, or disparities in construction quality among older bridges. Overall, the pattern indicates that bridge age is a key factor in determining condition, particularly for younger and midlife bridges.
+
+### Located_Municipality
+The **Located_Municipality** variable categorizes bridges based on the type of municipality where they are located. The three categories are City, Town, and Village.
+
+```{r}
+#| label: tbl-located-municipality-proportion
+#| tbl-cap: "Proportion of Bridges by Municipality. The first column shows the type of municipality (Located_Municipality), and the second column represents the proportion of bridges in each category (Percentage Account)."
+#| echo: false
+#| tbl-pos: "H"
+
+# Proportion of bridges by municipality
+located_municipality_proportion <- bridge_data %>%
+  group_by(Located_Municipality) %>%
+  summarise(
+    "Percentage Account" = paste0(round((n() / nrow(bridge_data)) * 100, 2), "%")
+  )
+
+# Create a formatted table
+kable(located_municipality_proportion, format = "latex", booktabs = TRUE)
+```
+@tbl-located-municipality-proportion shows the distribution of bridges across different municipality types. Towns account for the majority of the bridges, representing 82.11% of the dataset, while cities and villages make up much smaller proportions, at 9.15% and 8.75%, respectively. This indicates that most bridges are located in towns, likely due to their larger geographic coverage.
+```{r}
+#| label: tbl-located-municipality-condition
+#| tbl-cap: "Average Bridge Condition by Municipality. The first column shows the type of municipality (Located_Municipality), and the second column provides the average condition rating (Average Condition) for bridges in each category."
+#| echo: false
+#| tbl-pos: "H"
+
+# Average condition by municipality
+located_municipality_condition <- bridge_data %>%
+  group_by(Located_Municipality) %>%
+  summarise(
+    "Average Condition" = round(mean(Condition, na.rm = TRUE), 2)
+  )
+
+# Create a formatted table
+kable(located_municipality_condition, format = "latex", booktabs = TRUE)
+```
+@tbl-located-municipality-condition presents the average condition ratings of bridges by municipality type. Bridges in towns have the highest average condition rating of 5.41, followed by villages at 5.33 and cities at 5.16. The variation in average condition ratings may reflect differences in maintenance practices, traffic loads, or resource allocation among the municipality types.
+
+### Owner_Group
+The **Owner_Group** variable categorizes bridges based on their ownership. This variable is designed to estimate potential differences in bridge conditions that may arise from varying ownership responsibilities. The categories include Municipalities, NYSDOT, and Other. The Other category combines bridges owned by private entities, authorities, commissions, and similar groups, as each accounts for a small portion of the data, making it practical to group them together
+```{r}
+#| label: tbl-owner-group-proportion
+#| tbl-cap: "Proportion of Bridges by Ownership. The first column shows the type of ownership group (Owner_Group), and the second column represents the proportion of bridges in each category (Percentage Account)."
+#| echo: false
+#| tbl-pos: "H"
+
+# Proportion of bridges by ownership
+owner_group_proportion <- bridge_data %>%
+  group_by(Owner_Group) %>%
+  summarise(
+    "Percentage Account" = paste0(round((n() / nrow(bridge_data)) * 100, 2), "%")
+  )
+
+# Create a formatted table
+kable(owner_group_proportion, format = "latex", booktabs = TRUE)
+```
+@tbl-owner-group-proportion summarizes the ownership distribution of bridges. The two largest ownership groups are municipalities and NYSDOT, which account for 49.83% and 43.05% of the dataset, respectively. The remaining 7.13% of bridges fall under the "Other" category, which includes private, authority, and commission ownerships. The high percentage of bridges owned by municipalities and NYSDOT reflects their dominant role in managing public infrastructure.
 
 
+```{r}
+#| label: tbl-owner-group-condition
+#| tbl-cap: "Average Bridge Condition by Ownership. The first column shows the type of ownership group (Owner_Group), and the second column provides the average condition rating (Average Condition) for bridges in each category."
+#| echo: false
+#| tbl-pos: "H"
 
+# Average condition by ownership
+owner_group_condition <- bridge_data %>%
+  group_by(Owner_Group) %>%
+  summarise(
+    "Average Condition" = round(mean(Condition, na.rm = TRUE), 2)
+  )
 
-
+# Create a formatted table
+kable(owner_group_condition, format = "latex", booktabs = TRUE)
+```
+@tbl-owner-group-condition shows the average condition ratings of bridges grouped by ownership. Bridges owned by municipalities have the highest average condition rating of 5.45, while NYSDOT-owned bridges have a slightly lower rating of 5.33. Bridges in the "Other" ownership category have the lowest average condition rating of 5.10, which may reflect less consistent maintenance or differing priorities among private or non-government entities.
 
 # Model
 
