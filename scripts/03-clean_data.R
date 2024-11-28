@@ -22,22 +22,10 @@ raw_data <- read_delim(
   guess_max = 20000                                         # Improves guessing of column types by sampling more rows
 )
 
-# Ensure the necessary columns are numeric and drop rows with missing values
+# Ensure the necessary column is numeric and drop rows with missing values
 raw_data <- raw_data %>%
-  mutate(
-    YearInspected = as.numeric(YearInspected),    # Convert YearInspected to numeric for calculations
-    AgeAtInspection = as.numeric(AgeAtInspection), # Convert AgeAtInspection to numeric for calculations
-    Built = as.numeric(Built) ) %>%                    # Convert Built to numeric for comparison
+  mutate(AgeAtInspection = as.numeric(AgeAtInspection)) %>% # Convert AgeAtInspection to numeric for calculations
   drop_na()         
-
-# Filter the data to check for bridges that may have been rebuilt.
-# This identifies cases where the calculated construction year (YearInspected - AgeAtInspection)
-# does not match the recorded "Built" year, potentially indicating a rebuild or data inconsistency.
-filtered_data <- raw_data %>%
-  filter(round(YearInspected - AgeAtInspection) != Built)
-
-# Count how many rows were identified as potential rebuilds or inconsistencies.
-nrow(filtered_data)
 
 # Normalize Municipality names
 raw_data <- raw_data %>%
