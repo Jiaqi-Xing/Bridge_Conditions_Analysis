@@ -1,37 +1,43 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Models the relationship between bridge condition and explanatory variables
+# Author: Ariel Xing
+# Date: 26 November 2024
+# Contact: ariel.xing@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Cleaned bridge condition data saved in Parquet format
+# Any other information needed? Ensure the tidyverse and arrow packages are installed
 
 
 #### Workspace setup ####
-library(tidyverse)
-library(rstanarm)
+library(tidyverse)  
+library(arrow)      
 
 #### Read data ####
-analysis_data <- read_csv("data/analysis_data/analysis_data.csv")
+# Load the cleaned analysis dataset from Parquet file
+#### Read data ####
+bridge_data <- read_parquet("data/02-analysis_data/cleaned_bridge_condition_data.parquet")
 
 ### Model data ####
-first_model <-
-  stan_glm(
-    formula = flying_time ~ length + width,
-    data = analysis_data,
-    family = gaussian(),
-    prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
-    prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
-    prior_aux = exponential(rate = 1, autoscale = TRUE),
-    seed = 853
-  )
+# Ensure categorical variables are treated as factors for the model
+bridge_data <- bridge_data %>%
+  mutate(Located_Municipality = as.factor(Located_Municipality),
+         Owner_Group = as.factor(Owner_Group))
 
+# Ensure AgeAtInspection is treated as a numeric variable
+bridge_data <- bridge_data %>%
+  mutate(AgeAtInspection = as.numeric(AgeAtInspection))
+
+
+# Fit a linear model with AgeAtInspection , Located_Municipality and Owner_Group
+model <- lm(Condition ~ AgeAtInspection + Located_Municipality + Owner_Group, data = bridge_data)
+
+# Diagnostic checks
+par(mfrow = c(2, 2))
+plot(model)
+
+# Summary of the model
+summary(model)
 
 #### Save model ####
-saveRDS(
-  first_model,
-  file = "models/first_model.rds"
-)
-
-
+# Save the model object for future use
+saveRDS(model, file = "models/first_model.rds")
