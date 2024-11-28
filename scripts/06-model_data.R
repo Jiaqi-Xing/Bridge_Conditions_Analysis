@@ -31,13 +31,6 @@ bridge_data <- bridge_data %>%
 # Fit a linear model with AgeAtInspection , Located_Municipality and Owner_Group
 model <- lm(Condition ~ AgeAtInspection + Located_Municipality + Owner_Group, data = bridge_data)
 
-# Diagnostic checks
-par(mfrow = c(2, 2))
-plot(model)
-
-# Summary of the model
-summary(model)
-
 #### Save model ####
 # Save the model object for future use
 saveRDS(model, file = "models/first_model.rds")
