@@ -1,14 +1,14 @@
 ---
-title: "My title"
+title: "Assessing Bridge Conditions in New York State: The Impact of Age, Municipality, and Structural Deficiencies"
 subtitle: "My subtitle if needed"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+  - Ariel Xing
+thanks: "Code and data are available at: [https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis](https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis)."
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
+toc: true 
 number-sections: true
 bibliography: references.bib
 ---
@@ -46,11 +46,17 @@ Telegraphing paragraph: The remainder of this paper is structured as follows. @s
 
 We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
 
-Overview text
+The dataset, titled New_York_Bridges_2016[@2016data], was orignaly posted by[@NYS], collected by [@2016data]. Original website now are with newly updated data in 2020. This data contains detailed information about bridges in New York State. The raw dataset has 17502 rows and 13 columns, capturing structural, geographical, and condition-related aspects of 17502 bridges. After cleaning the data, we keep 4 variables for analysis, whith response variable "Condition" and three predictor variables, "AgeAtInspection"(numeric), "Located_Municipality"(categorical) and "Owner_Goup"(categorical).
+
+
+
+A similar dataset, New York Bridges 2020[@2020data], was considered but not used because its key variable for condition is binary (indicating whether the bridge is in poor condition or not). While this binary variable might be useful for certain analyses, it does not provide the granularity needed to fully understand bridge conditions or to assess the relationships between explanatory variables and condition scores. The 2016 dataset, by contrast, includes a numeric measure of condition, allowing for a more nuanced analysis.
 
 ## Measurement
 	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+In New York State, bridge inspectors from the State Department of Transportation (NYSDOT) conduct evaluations of non-toll bridges every two years to ensure their safety and structural integrity. Their assessments are performed on a span-by-span basis, meaning that each section of the bridge between its supporting points is inspected individually. For every bridge, inspectors examine up to 47 structural elements, including 25 span-specific components such as the deck, beams, and supports. Each component is assigned a condition score, ranging from 1 (severely deficient) to 7 (new or excellent condition), which reflects its structural health at the time of inspection. Inspectors also note any defects, such as cracks, corrosion, or wear, and document associated quantities, such as the length, area, or number of affected elements, to capture the extent of the damage.
+
+In addition to these detailed evaluations, inspectors assign federal ratings based on the overall average condition of a bridge’s major components. These federal ratings correspond to the values of the **Condition** variable used in our paper and analysis. Bridges with condition scores below 5 are classified as being in “poor” condition and are further categorized as either Structurally Deficient (SD) or Functionally Obsolete (FO). All findings from these assessments are recorded in inspection reports, providing essential data to guide maintenance, rehabilitation, or replacement efforts.
 
 ## Outcome variables
 
@@ -85,14 +91,6 @@ And also planes (@fig-planes). (You can change the height and width, but don't w
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
-
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
 ```
 
 Talk way more about it. 
@@ -149,10 +147,6 @@ Our results are summarized in @tbl-modelresults.
 #| warning: false
 #| message: false
 
-library(rstanarm)
-
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
 ```
 
 ```{r}
@@ -162,13 +156,7 @@ first_model <-
 #| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
 #| warning: false
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
+
 ```
 
 
@@ -217,15 +205,6 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 #| fig-cap: "Examining how the model fits, and is affected by, the data"
 #| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
 ```
 
 ## Diagnostics
@@ -244,9 +223,6 @@ posterior_vs_prior(first_model) +
 #| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
 
-plot(first_model, "trace")
-
-plot(first_model, "rhat")
 ```
 
 
