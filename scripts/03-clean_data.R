@@ -9,7 +9,6 @@
 
 #### Workspace setup ####
 library(tidyverse)
-library(stringr)
 library(arrow)
 
 #### Clean data ####
