@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project analyzes bridge condition data from New York State in 2016. The analysis involves simulating, cleaning, and modeling the data to understand factors affecting bridge conditions and to predict potential deficiencies.
+The NYS Bridge Condition Analysis project examines the factors influencing bridge condition ratings in New York State, using data from 2016[Download raw data here](https://dasl.datadescription.com/datafile/new-york-bridges-2016/?_sf_s=Bridge&_sfm_cases=4+59943). The study integrates data cleaning, simulation, and statistical modeling to evaluate how bridge characteristics such as Age of Bridge at Inspection, Located Municipality, and Ownership impact bridge condition ratings. By identifying key predictors of bridge deficiencies, this project aims to support infrastructure maintenance and inform policy-making decisions.
 
 ## File Structure
 
