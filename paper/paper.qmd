@@ -1,6 +1,6 @@
 ---
-title: "Assessing Bridge Conditions in New York State: The Impact of Age, Municipality, and Structural Deficiencies"
-subtitle: "My subtitle if needed"
+title: "Assessing Bridge Condition in New York State Using Multiple Linear Regression"
+subtitle: "Age, Municipality, and Ownership as Factors Influencing Bridge Condition Ratings "
 author: 
   - Ariel Xing
 thanks: "Code and data are available at: [https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis](https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis)."
@@ -277,7 +277,7 @@ $$
     + \beta_5 \cdot I(\text{Owner} = \text{Other}) 
     + \epsilon_i
 $$
-Here:
+where:
 
 - $\text{Condition}_i$: Condition rating of bridge $i$ (response variable).
 - $\text{Age}_i$: Age of bridge $i$ at the time of inspection.
@@ -323,10 +323,50 @@ Despite these limitations, the model's moderate complexity ensures it is neither
 In addition to the multiple linear regression model, we considered a generalized additive model (GAM), which unique strengths but were ultimately deemed less suitable for this analysis compared to multiple linear regression.
 
 A GAM could have been used to capture potential non-linear relationships between Age and Condition Rating. This flexibility is particularly beneficial when predictors exhibit non-linear effects, which might better reflect the natural deterioration of bridges over time. However, while GAMs provide excellent predictive performance, they sacrifice interpretability, as the model outputs are more challenging to communicate to non-technical audiences. Given the project's emphasis on explaining the relationship between predictors and condition ratings in a transparent manner, this complexity outweighed the benefits.
+\newpage
 
 # Results
+The linear regression model predicting bridge condition ratings estimates how factors： the bridge age at inspection, the located municipality and the ownership influence the condition of bridges.The model result is shown in @tbl-model-result
+```{r}
+#| label: tbl-model-result
+#| tbl-cap: "Summary Table of Bridge Condition Model"
+#| echo: false
+#| tbl-pos: "H"
 
+model <- lm(Condition ~ AgeAtInspection + Located_Municipality + Owner_Group, data = bridge_data)
 
+# Extract coefficients
+coefficients_table <- tidy(model)
+
+# Rename terms to match model equation notation
+coefficients_table$term <- gsub("\\(Intercept\\)", "Intercept", coefficients_table$term)
+coefficients_table$term <- gsub("AgeAtInspection", "Age", coefficients_table$term)
+coefficients_table$term <- gsub("Located_MunicipalityTown", "Municipality = Town", coefficients_table$term)
+coefficients_table$term <- gsub("Located_MunicipalityVillage", "Municipality = Village", coefficients_table$term)
+coefficients_table$term <- gsub("Owner_GroupNYSDOT", "Owner = NYSDOT", coefficients_table$term)
+coefficients_table$term <- gsub("Owner_GroupOther", "Owner = Other", coefficients_table$term)
+
+# Select columns to display and round numbers
+selected_table <- coefficients_table %>%
+  select(term, estimate) %>%
+  mutate(across(where(is.numeric), ~ round(., 2)))
+
+# Rename columns for clarity
+colnames(selected_table) <- c("Variables", "Coefficients", "Std. Error")
+
+# Display the updated table
+kable(selected_table, align = "c", format = "markdown")
+```
+
+The intercept, estimated at 6.15, represents the baseline condition rating for a bridge located in a city, owned by the municipality, and with an age of zero years. This is a useful reference point against which the effects of age, municipality, and ownership are compared.
+
+The coefficient for Age is -0.02, indicating that for each additional year a bridge ages, its condition rating decreases by 0.02 points on average. This result reflects the natural deterioration of infrastructure over time, as older bridges are more likely to experience wear and tear. @fig-ageatinspection-condition presented in the Data section illustrates this trend, showing a clear negative relationship between bridge age and condition. This visual evidence aligns with the regression model, where the Age coefficient (-0.02) confirms this downward trend. Although the effect of age on condition appears small on an annual basis, the cumulative impact over several decades can significantly compromise a bridge's integrity, highlights the importance of regular inspections and maintenance programs to mitigate the impact of aging on bridge conditions.
+
+The location of the bridge, represented by the municipality variable, also plays a significant role in condition ratings. Bridges located in towns and villages have higher condition ratings compared to those in cities, as indicated by the positive coefficients for Municipality = Town (0.17) and Municipality = Village (0.19). These findings suggest that urban bridges are more prone to deterioration, possibly due to heavier traffic loads or more complex structural demands. In contrast, bridges in towns and villages may face fewer stressors, resulting in better overall condition ratings.
+
+Ownership of the bridge is another significant factor affecting its condition. The model uses Municipality-owned bridges as the reference category. The results show that bridges owned by Municipality have the highest condition rating,  NYSDOT has condition ratings that are 0.09 points lower, while those owned by Other entities have ratings 0.16 points lower, on average. These differences may reflect variations in maintenance practices, funding availability, or operational priorities across ownership groups. Bridges owned by municipalities might benefit from closer proximity to local resources and management, whereas NYSDOT and other entities may face challenges such as broader jurisdictional responsibilities or limited funding for specific assets.
+
+Taken together, these results highlight how a combination of aging, geographic context, and administrative oversight influences bridge condition ratings. Bridges in cities or under the management of entities other than municipalities tend to have lower ratings, while those in towns, villages, or managed by municipalities are generally better maintained. This underscores the importance of tailoring maintenance strategies to address the specific challenges faced by different ownership groups and geographic locations. Future studies could enhance this analysis by exploring interactions between municipality and ownership or incorporating additional variables such as traffic volume, funding levels, or structural design characteristics to provide a deeper understanding of the factors driving bridge condition outcomes. 
 
 # Discussion
 
@@ -375,7 +415,7 @@ ggplot(data = augment(model), aes(.fitted, .resid)) +
 ```
 @fig-residual-plot provides evidence supporting the assumptions of linearity and homoscedasticity for the model. First, the random scatter of residuals around the horizontal line at zero indicates no systematic patterns, suggesting that the relationship between the predictors and the response variable is approximately linear. This random distribution implies that the model captures the linear relationships effectively without significant curvature or deviations.
 
-Second, while the upper residuals show a declining trend due to the bounded nature of the response variable (maximum rating of 7), the lower residuals and the bulk of residuals across the range of fitted values exhibit a relatively constant variance. This consistency in spread suggests that the assumption of homoscedasticity (constant variance of residuals) holds for the majority of the data, making the deviations in the upper range reasonable and contextually acceptable. Together, these observations indicate that the model adequately meets the assumptions of linearity and homoscedasticity.
+Second, while the upper residuals show a declining trend due to the bounded nature of the response variable (maximum rating of 7), the lower residuals and the majority of residuals across the range of fitted values exhibit relatively constant variance. For bridges with lower condition ratings (fitted values below approximately 4), residuals display more variability and are predominantly negative, indicating that the model overpredicts for poorly maintained bridges. Despite these deviations, the overall spread of residuals remains consistent for the majority of the data, suggesting that the assumption of homoscedasticity is largely satisfied. Therefore, the model is deemed appropriate for analyzing the dataset, though its limitations in predicting low-condition bridges should be noted.
 
 ## Nomality of Residuals
 
