@@ -21,6 +21,7 @@ bibliography: references.bib
 library(tidyverse)
 library(ggplot2)
 library(arrow)
+library(broom)
 library(knitr)
 bridge_data <- read_parquet("../data/02-analysis_data/cleaned_bridge_condition_data.parquet")
 ```
@@ -54,7 +55,7 @@ This dataset was chosen over the updated 2020 version from New York State Open D
 The raw dataset contains 17,502 rows and 13 columns, providing structural, geographical, and condition-related data on bridges across New York State. After data cleaning, four key variables were selected for analysis: the response variable “Condition” and three predictor variables, “AgeAtInspection”, “Located_Municipality”, and “Owner_Group”. The variables “Condition” and “AgeAtInspection” are numeric and were directly retained from the raw data. The categorical variables “Located_Municipality” and “Owner_Group” were newly constructed by categorizing the original variables “Municipality” and “Owner”, respectively.
 
 
-To conduct the analysis for this paper, we utilized the statistical programming language R [@citeR]. The workflow was supported by several packages, including tidyverse [@tidyverse] for data cleaning and manipulation, arrow [@arrow] for efficient data storage and retrieval, validate [@validate] for data testing and validation, knitr[@knitr] for creating tables and ggplot2 [@ggplot2] for creating visualizations.
+To conduct the analysis for this paper, we utilized the statistical programming language R [@citeR]. The workflow was supported by several packages, including tidyverse [@tidyverse] for data cleaning and manipulation, arrow [@arrow] for efficient data storage and retrieval, validate [@validate] for data testing and validation, knitr[@knitr] for creating tables and ggplot2 [@ggplot2] and broom[@broom] for creating visualizations.
 
 
 ## Measurement
@@ -159,7 +160,7 @@ ggplot(bridge_data, aes(x = AgeAtInspection, y = Condition)) +
 ```
 @fig-ageatinspection-condition illustrates the relationship between bridge age at inspection and their condition ratings. Most points are concentrated in the upper-left quadrant, showing that younger bridges tend to have higher condition ratings (close to 7). As bridge age increases, condition ratings generally decline, reflecting the expected deterioration over time. However, beyond approximately 80 to 100 years, the relationship becomes less defined, with condition ratings displaying a wide range. This variability may be influenced by differences in maintenance practices, varying levels of transportation load, or disparities in construction quality among older bridges. Overall, the pattern indicates that bridge age is a key factor in determining condition, particularly for younger and midlife bridges.
 
-### Bridge Located Municipality
+### Bridge Located Municipality 
 The **Located_Municipality** variable categorizes bridges based on the type of municipality where they are located. The three categories are City, Town, and Village.
 
 ```{r}
@@ -258,60 +259,70 @@ kable(owner_group_condition, format = "latex", booktabs = TRUE)
 
 # Model
 
-The goal of our modeling strategy is to investigate the relationship between bridge condition ratings and key predictors, including **AgeAtInspection**, **Located_Municipality**, and **Owner_Group**. The model aims to identify significant patterns and evaluate how these factors influence bridge conditions. 
+The goal of our modeling strategy is examine the relationship between **bridge condition ratings(condition)** and key predictors, including **the type of municipality where the bridge is located (Located_Municipality)**, **the age of the bridge at the time of inspection (AgeAtInspection)**, and **the ownership of the bridge (Owner_Group)**. By constructing a multiple linear regression model, we aim to quantify the impact of these factors on changes in bridge conditions. This analysis will provide a foundation for estimating the time and budget required for future bridge repair projects, supporting effective infrastructure maintenance planning.
 
-Here, we present a linear regression model, explaining its setup, assumptions, and justification. Details of model diagnostics and validation can be found in [Appendix -@sec-model-details].
+Here, we present a multiple linear regression model, explaining its setup, assumptions, and justification. Details of model diagnostics and validation can be found in [Appendix -@sec-model-details].
 
 ## Model Setup
 
-Define $y_i$ as the condition rating of bridge $i$, measured on a scale from 1 to 7, where higher values represent better condition. The predictors are defined as follows:
-- $x_{1i}$: Age of bridge $i$ at the time of inspection (**AgeAtInspection**), measured in years.
-- $x_{2i}$: Type of municipality where the bridge is located (**Located_Municipality**), categorized as **City**, **Town**, or **Village**.
-- $x_{3i}$: Type of ownership of bridge $i$ (**Owner_Group**), categorized as **Municipality**, **NYSDOT**, or **Other**.
+The Multiple linear regression model, **Bridge Condition model**,  is expressed as:
 
-The linear regression model is expressed as:
-```{=latex}
-\[
-\begin{aligned}
-y_i &= \beta_0 + \beta_1 x_{1i} + \beta_2 x_{2i, \text{City}} + \beta_3 x_{2i, \text{Village}} \\
-&\quad + \beta_4 x_{3i, \text{NYSDOT}} + \beta_5 x_{3i, \text{Other}} + \epsilon_i, \\
-\epsilon_i &\sim \text{Normal}(0, \sigma^2),
-\end{aligned}
-\]
+$$
+\text{Condition}_i = \beta_0 + \beta_1 \cdot \text{Age}_i 
+    + \beta_2 \cdot I(\text{Municipality} = \text{City}) 
+    + \beta_3 \cdot I(\text{Municipality} = \text{Village})
+$$
+$$
+    + \beta_4 \cdot I(\text{Owner} = \text{NYSDOT}) 
+    + \beta_5 \cdot I(\text{Owner} = \text{Other}) 
+    + \epsilon_i
+$$
+Here:
 
-```
+- $\text{Condition}_i$: Condition rating of bridge $i$ (response variable).
+- $\text{Age}_i$: Age of bridge $i$ at the time of inspection.
+- $I(\text{Municipality} = \text{City})$: Indicator variable for bridges located in a **City**.
+- $I(\text{Municipality} = \text{Village})$: Indicator variable for bridges located in a **Village**.
+  - Reference category: **Town**.
+- $I(\text{Owner} = \text{NYSDOT})$: Indicator variable for bridges owned by **NYSDOT**.
+- $I(\text{Owner} = \text{Other})$: Indicator variable for bridges owned by **Other entities**.
+  - Reference category: **Municipalities**.
+- $\beta_0$: Intercept, representing the average condition rating for a Town-owned bridge with zero age.
+- $\beta_1$: Coefficient for the effect of Age on condition rating.
+- $\beta_2, \beta_3$: Coefficients for the effect of municipality type (City or Village, relative to Town).
+- $\beta_4, \beta_5$: Coefficients for the effect of ownership type (NYSDOT or Other, relative to Municipality).
+- $\epsilon_i$: Error term, capturing unexplained variation.
 
 The model assumes that the relationship between predictors and the response variable is linear, and that the residuals are normally distributed with constant variance.
 
-### Software Implementation
-
-We implemented the model in R using the `lm()` function, which fits a linear regression model using ordinary least squares. Model validation and diagnostics, including residual analysis and goodness-of-fit metrics, were conducted to assess model performance.
+We implemented the multiple linear regression model in R using the lm() function, which estimates coefficients through ordinary least squares. 
 
 ## Model Justification
+### Variable Choice
+The selection of predictors in the model reflects key aspects discussed in the data section, ensuring a comprehensive understanding of bridge condition ratings. Age at Inspection was included as a continuous variable because @fig-ageatinspection-condition demonstrated a clear relationship between bridge age and condition ratings. Using age as a continuous predictor avoids the loss of information that would occur if age were categorized into groups, allowing the model to capture subtle variations in condition ratings as bridges age. Additionally, this choice aligns with the dataset's structure, where age is measured on a continuous scale.
 
-The inclusion of **AgeAtInspection** as a continuous predictor reflects its importance in capturing the natural deterioration of bridges over time. **Located_Municipality** and **Owner_Group** were included as categorical predictors to account for variations in maintenance practices, funding, and infrastructure quality that differ across municipalities and ownership types. These variables align directly with those defined in the data section, ensuring consistency between the data description and modeling approach.
+Municipality Type (City, Town, Village) was treated as a categorical variable with Town as the reference category. The data revealed that condition ratings vary systematically between municipality types, likely due to differences in traffic loads, maintenance resources, and environmental stressors. Modeling Municipality Type as levels rather than using dummy variables for individual municipalities ensures clarity and interpretability, highlighting differences between City, Town, and Village bridges.
 
-We chose a linear regression model for its simplicity, interpretability, and appropriateness for the continuous response variable (**Condition**). While other models, such as generalized additive models or Bayesian regressions, could capture non-linearities or incorporate priors, the current dataset supports a linear approach without overcomplicating the analysis.
+Ownership Type (Municipalities, NYSDOT, Other) was similarly treated as a categorical variable, allowing the model to reflect systematic differences in bridge conditions based on ownership responsibilities. The inclusion of ownership accounts for varying maintenance schedules and resource allocation. The reference category (Municipalities) was chosen because it comprises the largest proportion of bridges in the dataset, providing a stable baseline for comparison.
 
-### Assumptions and Limitations
+Together, these features were selected to balance the need for interpretability and explanatory power while reflecting meaningful patterns observed in the data section.
 
-The model assumes:
-- A linear relationship between predictors and the response variable.
-- Homoscedasticity (constant variance of residuals).
-- Normality of residuals.
-- Independence of observations.
+### Model Choice
+A multiple linear regression model was chosen for its simplicity, interpretability, and suitability for quantifying the influence of individual predictors while controlling for others. This model effectively supports the research goal of understanding how Age, Municipality Type, and Ownership Type affect bridge condition ratings.
 
-Potential limitations include the exclusion of interaction terms and other factors (e.g., traffic volume, environmental conditions) that could influence bridge condition. Furthermore, the linear regression model may not capture complex non-linear relationships or spatial dependencies inherent in the data.
+The model assumes a linear relationship between the predictors and the response variable (Condition Rating). This assumption is reasonable given observed trends, including the clear negative association between Age and Condition, and systematic differences between categories of Municipality and Ownership. While this assumption aligns with the data, it may not fully capture non-linear relationships or interactions between predictors. Nevertheless, the simplicity of linear regression is appropriate for this study’s goals, balancing clarity with analytical rigor.
 
-### Validation and Diagnostics
+Other key assumptions include Normality of Residuals and homoscedasticity (constant variance of residuals). Diagnostic tools were used to validate these assumptions, with details provided in [Appendix -@sec-model-diagnostics].
 
-To validate the model, we performed:
-- **Residual Analysis**: Checked for patterns in residuals to confirm assumptions of linearity and homoscedasticity.
-- **Goodness-of-Fit Metrics**: Calculated $R^2$ and adjusted $R^2$ to evaluate how well the model explains variability in the data.
-- **Sensitivity Analysis**: Assessed the impact of excluding extreme outliers on the estimated coefficients.
-- **Alternative Models**: Considered models with interaction terms and different transformations of predictors but found no substantial improvement in model performance.
+### Limitations
+Several limitations must be acknowledged. Due to data constraints, the model excludes potentially influential factors such as transport load, weather conditions, and environmental influences, introducing the risk of omitted variable bias. This limitation reduces the explanatory power of the model and may skew the estimated effects of included predictors. Additionally, the model does not account for interaction effects, such as how age and municipality might jointly influence condition ratings. Incorporating such interactions could enhance the model’s explanatory ability but would increase its complexity. Finally, the linearity assumption, while reasonable, may oversimplify more nuanced relationships in the data.
 
-Details of model diagnostics, including plots of residuals and additional goodness-of-fit metrics, are provided in [Appendix -@sec-model-details].
+Despite these limitations, the model's moderate complexity ensures it is neither overly simplistic nor unnecessarily complicated, making it appropriate for addressing the research question.
+
+## Alternative model
+In addition to the multiple linear regression model, we considered a generalized additive model (GAM), which unique strengths but were ultimately deemed less suitable for this analysis compared to multiple linear regression.
+
+A GAM could have been used to capture potential non-linear relationships between Age and Condition Rating. This flexibility is particularly beneficial when predictors exhibit non-linear effects, which might better reflect the natural deterioration of bridges over time. However, while GAMs provide excellent predictive performance, they sacrifice interpretability, as the model outputs are more challenging to communicate to non-technical audiences. Given the project's emphasis on explaining the relationship between predictors and condition ratings in a transparent manner, this complexity outweighed the benefits.
 
 # Results
 
@@ -342,44 +353,40 @@ Weaknesses and next steps should also be included.
 
 # Additional data details
 
-# Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+# Model Diagnostics {#sec-model-diagnostics}
+## Linearity and Homoscedasticity Check
 
 ```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+#| label: fig-residual-plot
+#| fig-cap: "Residuals vs. Fitted Values for Bridge Condition rating Model. The residuals (differences between observed and predicted bridge condition ratings) are on the y-axis and the fitted values (predicted condition ratings from the model) are on the x-axis. Each dot represents a bridge, showing the magnitude and direction of its residual. The red dashed line indicates the zero residual line, representing where residuals would lie if the predictions were perfect."
+#| fig-pos: "H"
+#| echo: False
 
+
+# Fit the model
+model <- lm(Condition ~ AgeAtInspection + Located_Municipality + Owner_Group, data = bridge_data)
+
+# Residual Plot: Linearity and Homoscedasticity
+ggplot(data = augment(model), aes(.fitted, .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  labs(x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
 ```
+@fig-residual-plot provides evidence supporting the assumptions of linearity and homoscedasticity for the model. First, the random scatter of residuals around the horizontal line at zero indicates no systematic patterns, suggesting that the relationship between the predictors and the response variable is approximately linear. This random distribution implies that the model captures the linear relationships effectively without significant curvature or deviations.
 
-## Diagnostics
+Second, while the upper residuals show a declining trend due to the bounded nature of the response variable (maximum rating of 7), the lower residuals and the bulk of residuals across the range of fitted values exhibit a relatively constant variance. This consistency in spread suggests that the assumption of homoscedasticity (constant variance of residuals) holds for the majority of the data, making the deviations in the upper range reasonable and contextually acceptable. Together, these observations indicate that the model adequately meets the assumptions of linearity and homoscedasticity.
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+## Nomality of Residuals
 
 ```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
-
+#| label: fig-qq-plot
+#| echo: False
+#| fig-cap: "Q-Q Plot of Standardized Residuals for Bridge Condition Model. The x-axis represents the theoretical quantiles from a standard normal distribution, and the y-axis represents the standardized residuals of the Bridge Condition model. Each dot represents a bridge, showing how its residual compares to the expected normal distribution. The black dotted line represents the theoretical relationship the residuals would follow if they were perfectly normally distribute."
+#| fig-pos: "H"
+plot(model, which = 2)
 ```
-
+@fig-qq-plot indicates that the residuals of the model generally align with the theoretical quantiles of a normal distribution, as most points lie close to the reference line. While there is slight deviation in the extreme tails, this is not unusual for larger datasets and does not significantly impact the overall assumption of normality. The observed residual pattern supports the suitability of the model for the data, as minor deviations in the tails are unlikely to undermine the reliability of hypothesis testing or predictions. Therefore, the model can be considered appropriate for analysis.
 
 
 \newpage
