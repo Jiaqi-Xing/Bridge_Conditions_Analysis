@@ -10,11 +10,11 @@ number-sections: true
 bibliography: "references.bib"
 
 ---
-This datasheet was created using the R programming language [@citeR].
+This datasheet is created using programming language [@citeR]
 
 **Motivation**
 
-The "New York Bridges 2016" dataset was created to document and assess the structural conditions and administrative details of bridges across New York State, supporting infrastructure management, maintenance prioritization, and policymaking. Developed by the New York State Department of Transportation (NYSDOT) and made publicly available through the Data and Story Library (DASL), this dataset addresses the need for standardized, comprehensive data on bridge deterioration influenced by geographic, administrative, and traffic-related factors. Funded as part of New York State’s infrastructure monitoring programs, the dataset serves as a vital resource for researchers, policymakers, and engineers, enabling data-driven decision-making to enhance public safety and infrastructure sustainability.
+The "New York Bridges 2016" dataset was created to document and assess the structural conditions and administrative details of bridges across New York State, supporting infrastructure management, maintenance prioritization, and policy-making. Developed by the New York State Department of Transportation (NYSDOT) and made publicly available through the Data and Story Library (DASL), this dataset addresses the need for standardized, comprehensive data on bridge deterioration influenced by geographic, administrative, and traffic-related factors. Funded as part of New York State’s infrastructure monitoring programs, the dataset serves as a vital resource for researchers, policymakers, and engineers, enabling data-driven decision-making to enhance public safety and infrastructure sustainability.
 
 **Composition**
 
