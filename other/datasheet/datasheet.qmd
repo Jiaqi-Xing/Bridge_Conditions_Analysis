@@ -59,7 +59,7 @@ No third parties have imposed intellectual property-based restrictions or limita
 
 The New York Bridges 2016 dataset was originally published by Open Data NY and later archived by the Data and Story Library (DASL) for academic and historical purposes. While the dataset is static and will not be updated on DASL, newer versions of the data are periodically published as entirely new datasets on the Open Data NY platform.
 
-For questions regarding the dataset hosted on DASL, users can reach out by filling out the contact form available [here](https://dasl.datadescription.com/datafile/new-york-bridges-2016/?_sf_s=Bridge&_sfm_cases=4+59943). This ensures that inquiries about the archived dataset can be addressed promptly. However, for the latest data or updated versions, users are encouraged to visit the Open Data NY platform, which continues to provide up-to-date datasets on bridge conditions in New York State.
+For questions regarding the dataset hosted on DASL, users can reach out by filling out the contact form available [here](https://datadescription.com/). This ensures that inquiries about the archived dataset can be addressed promptly. However, for the latest data or updated versions, users are encouraged to visit the Open Data NY platform, which continues to provide up-to-date datasets on bridge conditions in New York State.
 
 This dual hosting approach ensures that both historical and current datasets remain accessible for research, policy-making, and educational purposes, catering to a broad spectrum of user needs.
 
