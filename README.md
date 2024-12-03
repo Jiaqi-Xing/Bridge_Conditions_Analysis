@@ -12,7 +12,7 @@ The repo is structured as:
 -   `data/raw_data` Contains the raw bridge condition data for New York State in 2016, as         obtained from The Data and Story Library. [Download raw data here](https://dasl.datadescription.com/datafile/new-york-bridges-2016/?_sf_s=Bridge&_sfm_cases=4+59943).
 -   `data/analysis_data` contains the cleaned bridge condition data used for analysis
 -   `models` contains fitted models. 
--   `other` contains details about LLM chat interactions and sketches.
+-   `other` contains details about LLM chat interactions, datasheet and sketches.
 -   `paper` contains the files used to generate the paper, including:
      - PDF of the paper
      - the Quarto document
