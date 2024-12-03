@@ -6,7 +6,8 @@ author:
 thanks: "Code and data are available at: [https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis](https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This study examines the factors influencing bridge conditions in New York State, focusing on the roles of age, municipality location, and ownership, using condition ratings provided by NYSDOT as a measure of bridge quality. Applying a multiple linear regression model, the analysis reveals that for every additional year of age, a bridge's condition rating decreases by 0.02 points, reflecting the progressive impact of aging. On average, bridges located in towns and villages have condition ratings that are 0.17 and 0.19 points higher, respectively, than those in cities. Additionally, bridges owned by NYSDOT and other entities have condition ratings that are 0.09 and 0.16 points lower, respectively, than those owned by municipalities. These findings highlight the importance of targeted maintenance strategies that account for geographic and administrative factors to enhance infrastructure sustainability and safety.
+"
 format: pdf
 toc: true 
 number-sections: true
@@ -29,19 +30,15 @@ bridge_data <- read_parquet("../data/02-analysis_data/cleaned_bridge_condition_d
 
 # Introduction
 
-Overview paragraph
+Bridges are fundamental to New York State’s infrastructure, supporting transportation, economic activity, and community connections. They span diverse regions, from bustling urban centers to remote rural areas, accommodating varied traffic loads and environmental conditions. Maintaining these structures is essential to ensure public safety, economic efficiency, and reliable mobility. However, challenges such as aging infrastructure, resource constraints, and differing administrative responsibilities highlight the importance of understanding the factors that affect bridge conditions.
 
-Estimand paragraph
+The estimand in this study is the effect of three key predictors: bridge age, municipality type, and ownership, on bridge condition ratings. Using a multiple linear regression model, we analyze condition ratings from 17,502 bridges in New York State to quantify how these factors influence bridge deterioration. 
 
-Results paragraph
+The results indicate that age is a major driver of bridge deterioration, with condition ratings decreasing by 0.02 points for each additional year. On average, bridges in towns and villages have better condition ratings than those in cities, with scores that are 0.17 and 0.19 points higher, respectively. Ownership also affects condition ratings: municipally owned bridges perform best, while NYSDOT-owned bridges score 0.09 points lower, and bridges owned by other entities score 0.16 points lower. These findings demonstrate the combined influence of geographic location and administrative responsibility on bridge conditions.
 
-Why it matters paragraph
+This research highlights the importance of targeted maintenance strategies that address the specific needs of aging bridges across different geographic and administrative contexts. By identifying the primary factors affecting bridge conditions, the study supports more effective resource distribution and prioritization in infrastructure management. These results contribute to the long-term sustainability and safety of the state’s transportation network.
 
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
+The remainder of this paper is structured as follows. @sec-data provides an overview of the dataset and variables used in the analysis. @sec-model outlines the regression model, its assumptions, and limitations. @sec-result presents the results, while @sec-discussion discusses their implications and offers recommendations for future research. @sec-methodology introduces an idealized methodology for collecting bridge traffic flow data, and @sec-model-diagnostics details the diagnostics performed to validate the model.
 
 
 # Data {#sec-data}
@@ -106,7 +103,7 @@ ggplot(bridge_data, aes(x = Condition)) +
   scale_x_continuous(breaks = seq(1, 7, 1), limits = c(1, 7)) + # Ensures x-axis shows 1 to 7
   labs(
     x = "Bridge Condition Rating",
-    y = "Frequency"
+    y = "Count"
   ) +
   theme_minimal()
 ```
@@ -134,7 +131,7 @@ ggplot(bridge_data, aes(x = AgeAtInspection)) +
   geom_density(aes(y = ..count..), color = "blue", size = 1) + # Density curve scaled to histogram
   labs(
     x = "Bridge Ages at Inspection (Years)",
-    y = "Frequency"
+    y = "Count"
   ) +
   theme_minimal()
 
@@ -257,7 +254,7 @@ kable(owner_group_condition, format = "latex", booktabs = TRUE)
 ```
 @tbl-owner-group-condition shows the average condition ratings of bridges grouped by ownership. Bridges owned by municipalities have the highest average condition rating of 5.45, while NYSDOT-owned bridges have a slightly lower rating of 5.33. Bridges in the "Other" ownership category have the lowest average condition rating of 5.10, which may reflect less consistent maintenance or differing priorities among private or non-government entities.
 
-# Model
+# Model {#sec-model}
 
 The goal of our modeling strategy is examine the relationship between **bridge condition ratings(condition)** and key predictors, including **the type of municipality where the bridge is located (Located_Municipality)**, **the age of the bridge at the time of inspection (AgeAtInspection)**, and **the ownership of the bridge (Owner_Group)**. By constructing a multiple linear regression model, we aim to quantify the impact of these factors on changes in bridge conditions. This analysis will provide a foundation for estimating the time and budget required for future bridge repair projects, supporting effective infrastructure maintenance planning.
 
@@ -325,7 +322,7 @@ In addition to the multiple linear regression model, we considered a generalized
 A GAM could have been used to capture potential non-linear relationships between Age and Condition Rating. This flexibility is particularly beneficial when predictors exhibit non-linear effects, which might better reflect the natural deterioration of bridges over time. However, while GAMs provide excellent predictive performance, they sacrifice interpretability, as the model outputs are more challenging to communicate to non-technical audiences. Given the project's emphasis on explaining the relationship between predictors and condition ratings in a transparent manner, this complexity outweighed the benefits.
 \newpage
 
-# Results
+# Results {#sec-result}
 The linear regression model predicting bridge condition ratings estimates how factors： the bridge age at inspection, the located municipality and the ownership influence the condition of bridges.The model result is shown in @tbl-model-result
 ```{r}
 #| label: tbl-model-result
@@ -368,7 +365,7 @@ Ownership of the bridge is another significant factor affecting its condition. T
 
 Taken together, these results highlight how a combination of aging, geographic context, and administrative oversight influences bridge condition ratings. Bridges in cities or under the management of entities other than municipalities tend to have lower ratings, while those in towns, villages, or managed by municipalities are generally better maintained. This underscores the importance of tailoring maintenance strategies to address the specific challenges faced by different ownership groups and geographic locations. Future studies could enhance this analysis by exploring interactions between municipality and ownership or incorporating additional variables such as traffic volume, funding levels, or structural design characteristics to provide a deeper understanding of the factors driving bridge condition outcomes. 
 
-# Discussion
+# Discussion {#sec-discussion}
 
 ## First discussion point {#sec-first-point}
 
@@ -390,8 +387,86 @@ Weaknesses and next steps should also be included.
 
 # Appendix {-}
 
+# Appendix: Idealized Methodology for Collecting Bridge Traffic Flow Data
 
-# Additional data details
+## Overview
+The objective of this methodology is to design a robust system for collecting traffic flow data across New York State bridges. This data serves as a foundation for understanding the interaction between traffic intensity and bridge conditions. By employing rigorous sampling strategies and advanced collection techniques, this methodology ensures that the collected data is representative and actionable for policy and maintenance decisions.
+
+## Target Population
+The target population encompasses all operational bridges in New York State. These include bridges in urban, suburban, and rural areas, varying by traffic volume and ownership. Bridges were selected to account for:
+
+- **Geographic Coverage**: Urban centers with high traffic density, suburban transit hubs, and rural connectors.
+- **Administrative Ownership**: Municipal, NYSDOT, and privately owned bridges.
+- **Traffic Intensity**: Low-traffic rural bridges, moderate suburban thoroughfares, and high-traffic urban crossings.
+
+This definition ensures inclusivity, enabling the methodology to capture regional differences in traffic flow and their effect on bridge conditions.
+
+## Sampling Approach
+
+### Stratification Variables
+To ensure the data represents the diversity of bridges, stratified random sampling is applied. Stratification variables include:
+
+- **Municipality Type**: City, town, village.
+- **Ownership**: Municipal, state, private.
+- **Traffic Volume**: High, medium, low daily use.
+
+Each bridge within a stratum is given an equal chance of selection, ensuring proportional representation across categories.
+
+### Sample Size
+Using the formula for sample size determination:
+
+$$
+n = \frac{Z^2 \cdot p \cdot (1-p)}{e^2}
+$$
+
+Where:
+
+- \( Z = 1.96 \) for 95% confidence,
+- \( p = 0.5 \), assuming maximum variability,
+- \( e = 0.05 \), margin of error.
+
+A minimum of 384 bridges is required to ensure statistically reliable data for the entire state.
+
+## Data Collection Techniques
+
+### Automatic Vehicle Counters (AVC)
+- Deployed on selected bridges to continuously record vehicle counts and classifications.
+- Cost-effective for high-traffic bridges requiring sustained monitoring.
+
+### Camera-Based Systems
+- Capture detailed traffic patterns, including speed and vehicle types, using AI-enhanced analysis.
+- Effective for complex traffic conditions but requires privacy safeguards.
+
+### GPS Data Integration
+- Utilize anonymized GPS data to complement on-site measurements, especially for remote or less-monitored bridges.
+
+### Manual Surveys
+- Conducted periodically to validate automated data and address gaps, particularly in low-traffic or rural settings.
+
+## Data Validation and Quality Control
+
+### Attention Checks
+Automated systems are periodically calibrated to ensure accuracy.
+
+### Cross-Validation
+Data from multiple sources (e.g., AVC, GPS) is compared to identify discrepancies.
+
+### Consistency Checks
+Traffic patterns are reviewed for anomalies that may indicate errors or data corruption.
+
+## Challenges and Limitations
+
+### Coverage Bias
+Rural bridges may be underrepresented due to accessibility challenges. Tailored solutions are necessary to address this.
+
+### Ethical Concerns
+Privacy issues related to camera and GPS monitoring must be mitigated through anonymization protocols.
+
+### Budget Constraints
+High-cost technologies like AI-enabled cameras may limit widespread deployment.
+
+## Relevance to Study
+Incorporating traffic flow data enhances the predictive model of bridge conditions by linking usage intensity to structural deterioration. This data allows policymakers to prioritize maintenance based on a combination of bridge condition and traffic stress.
 
 # Model Diagnostics {#sec-model-diagnostics}
 ## Linearity and Homoscedasticity Check
