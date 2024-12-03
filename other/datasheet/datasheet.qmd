@@ -1,0 +1,68 @@
+---
+title: "Datasheet for 'New York Bridge 2016'"
+author: 
+  - Ariel Xing
+thanks: "Code and data are available at: https://github.com/Jiaqi-Xing/NYS_Bridge_Condition_Analysis."
+date: today
+date-format: long
+format: pdf
+number-sections: true
+bibliography: "references.bib"
+
+---
+This datasheet was created using the R programming language [@citeR].
+
+**Motivation**
+
+The "New York Bridges 2016" dataset was created to document and assess the structural conditions and administrative details of bridges across New York State, supporting infrastructure management, maintenance prioritization, and policymaking. Developed by the New York State Department of Transportation (NYSDOT) and made publicly available through the Data and Story Library (DASL), this dataset addresses the need for standardized, comprehensive data on bridge deterioration influenced by geographic, administrative, and traffic-related factors. Funded as part of New York State’s infrastructure monitoring programs, the dataset serves as a vital resource for researchers, policymakers, and engineers, enabling data-driven decision-making to enhance public safety and infrastructure sustainability.
+
+**Composition**
+
+The New York Bridges 2016 dataset comprises records of 17,502 individual bridges across the state, each representing a single instance. These data points include structural condition ratings, administrative ownership details, inspection dates, geographic locations, and additional features such as construction year and status indicators like "Structurally Deficient" (SD) or "Functionally Obsolete" (FO). These attributes make the dataset ideal for evaluating bridge conditions, deterioration trends, and the effectiveness of maintenance strategies.
+
+Each bridge record is detailed and standardized, but not all bridges have complete information. For example, certain records lack exact inspection dates or detailed ownership classifications. This incompleteness reflects the challenges in collecting data consistently across a large and diverse infrastructure network. The dataset includes attributes like Municipality, Owner, Age at Inspection, and Condition Rating, making it suitable for stratified analyses based on geographic and administrative categories.
+
+The dataset is comprehensive rather than a sample, aiming to capture all operational bridges in New York State as of 2016. This ensures extensive geographic and administrative coverage, from urban centers with high traffic density to rural bridges with lower traffic loads. While the data is representative, rural bridges may have less frequent or less detailed inspections, potentially introducing a minor bias.
+
+The dataset's primary target variable is the Condition Rating, a numeric measure ranging from 0 to 7 that assesses the structural integrity of each bridge. Relationships between instances, such as proximity or ownership clustering, are not explicitly encoded but can be inferred using fields like Municipality or Owner.
+
+This dataset does not rely on external resources or links and does not contain sensitive or personally identifiable information. It is publicly available and curated for research and policy planning purposes, ensuring ethical and practical usability for stakeholders. With its rich details and broad scope, the dataset supports in-depth analysis of infrastructure trends across New York State.
+
+
+**Collection process**
+
+The dataset titled "New_York_Bridges_2016" was originally compiled by the New York State Open Data platform[@ny_open_data_2020], with county-level contributions from the New York State Department of Transportation [@county_data]. Accessed via the Data And Story Library [@dasl_data_2016], which archives historical datasets for academic and public use, it represents a comprehensive resource for understanding bridge conditions across New York State.
+
+Data for each bridge instance was acquired through direct inspections and administrative records. Observable characteristics such as structural condition ratings, age at inspection, and administrative ownership were collected via standardized field inspections conducted by certified engineers and inspectors, adhering to federal and state protocols. Validation procedures included regular audits and cross-checks to ensure data accuracy and consistency.
+
+The primary mechanisms for data collection included on-site manual inspections supported by tools like measurement instruments and inspection checklists. Administrative details, such as ownership, were sourced from official state databases. NYSDOT ensured the reliability of these processes through rigorous training programs for inspectors and periodic calibration of measurement tools. The dataset is comprehensive, capturing all operational bridges in the state as of 2016, rather than representing a sample, and thus no specific sampling strategy was required.
+
+The data collection process involved certified civil engineers, state employees, and field inspectors employed by NYSDOT. These professionals adhered to standard government pay structures, with no involvement of external contractors or crowdworkers. The data was collected over the span of 2016, aligning the collection timeframe with the creation of the dataset, ensuring the information reflects real-world conditions at the time.
+
+Ethical review processes were not explicitly documented, as the dataset pertains exclusively to public infrastructure and does not involve sensitive or personal information. Data was not collected directly from individuals or third-party sources, eliminating concerns regarding notification, consent, or revocation mechanisms. Additionally, since the dataset focuses solely on publicly accessible infrastructure, no privacy or ethical issues were identified that would necessitate a formal review.
+
+In summary, the New York Bridges 2016 dataset was compiled through standardized field inspections and administrative records, validated by trained professionals, and ethically sound due to its exclusive focus on public infrastructure. Its methodology ensures high-quality, accurate data for research, policy planning, and infrastructure management, while DASL plays a critical role in archiving and maintaining this resource for public and academic use.
+
+
+**Uses**
+
+The **New York Bridges 2016 dataset** should not be used for tasks requiring real-time data analysis or dynamic decision-making, as it represents a static snapshot of bridge conditions as of 2016. It is unsuitable for assessing current structural risks or predicting immediate failures without incorporating updated data. Additionally, the dataset should not be used for commercial purposes that could conflict with public interests, such as privatization analyses aimed at reducing public access to infrastructure. Finally, it is not appropriate for applications requiring sensitive or individualized data, as it does not contain personal information or real-time monitoring details.
+
+**Distribution**
+The New York Bridges 2016 dataset is publicly available and distributed through the Data and Story Library (DASL) website. It is accessible as a downloadable file in common formats such as text or CSV, ensuring ease of use for researchers and policymakers. The dataset does not have a dedicated digital object identifier (DOI), but it is maintained under publicly available terms, which can be accessed directly from the DASL platform.
+
+The dataset is distributed without any copyright or intellectual property restrictions. It falls under public domain policies, given its origins in government data provided by the New York State Department of Transportation. There are no associated fees or licensing requirements, making it freely accessible for non-commercial, academic, and policy-related use.
+
+No third parties have imposed intellectual property-based restrictions or limitations on the dataset, and there are no export controls or regulatory restrictions associated with its use. As a dataset focused solely on public infrastructure, it is designed for open access to encourage widespread research and application in infrastructure planning and analysis.
+
+**Maintenance**
+
+The New York Bridges 2016 dataset was originally published by Open Data NY and later archived by the Data and Story Library (DASL) for academic and historical purposes. While the dataset is static and will not be updated on DASL, newer versions of the data are periodically published as entirely new datasets on the Open Data NY platform.
+
+For questions regarding the dataset hosted on DASL, users can reach out by filling out the contact form available [here](https://dasl.datadescription.com/datafile/new-york-bridges-2016/?_sf_s=Bridge&_sfm_cases=4+59943). This ensures that inquiries about the archived dataset can be addressed promptly. However, for the latest data or updated versions, users are encouraged to visit the Open Data NY platform, which continues to provide up-to-date datasets on bridge conditions in New York State.
+
+This dual hosting approach ensures that both historical and current datasets remain accessible for research, policy-making, and educational purposes, catering to a broad spectrum of user needs.
+
+\newpage
+
+# References
