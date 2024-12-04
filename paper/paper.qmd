@@ -367,19 +367,22 @@ Taken together, these results highlight how a combination of aging, geographic c
 
 # Discussion {#sec-discussion}
 
-## First discussion point {#sec-first-point}
+## Age Distribution Patterns {#sec-age-distribution}
+The distribution of bridge ages at inspection demonstrates distinct peaks approximately every 25 years, reflecting historical trends in bridge construction or renovation efforts. These periodic patterns likely correspond to infrastructure development initiatives or funding cycles at specific points in time. Understanding these trends is crucial for proactive resource allocation, as large clusters of aging bridges may require simultaneous maintenance or replacement. Planning for these future needs will help mitigate risks associated with concentrated structural deterioration.
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+## Repair Prioritization and Budget Allocation
+The regression model highlights the critical factors of bridge age, municipality type, and ownership in determining condition ratings. Urban bridges and those owned by NYSDOT or private entities consistently exhibit lower condition ratings, likely due to heavier traffic loads and diverse maintenance practices. These findings underscore the need for targeted repair strategies. Municipalities, which generally achieve better condition ratings, could serve as a benchmark for best practices in resource utilization. Repair prioritization should integrate both structural condition and traffic intensity to maximize the effectiveness of budget allocations, ensuring that high-use and socioeconomically vital bridges receive timely attention.
 
-## Second discussion point
+## Model Limitations and Future Improvements
+The model's low \( R^2 \) value, 0.396, suggests it does not fully capture the range of factors influencing bridge conditions. Key omitted variables, such as traffic volume, environmental stressors, and material quality, may significantly impact bridge deterioration. Future models should incorporate these variables, which can be obtained from traffic monitoring systems, meteorological data, and engineering databases, to enhance predictive accuracy. Furthermore, the assumption of constant variance is invalid for bridges with a condition rating below 4.5, indicating the current model is unsuitable for severely damaged bridges. While these bridges represent a small proportion of the dataset, their exclusion limits the model's scope. Future research should develop a separate model for low-condition bridges to address their unique deterioration dynamics.
 
-Please don't use these as sub-heading labels - change them to be what your point actually is.
+## Challenges with Low-Condition Bridges
+Based on the residual plot, the model tends to underestimate the actual condition ratings for low-condition bridges, as indicated by the positive residuals. This underestimation may be due to the complexity of these bridges' circumstances. First, low-condition bridges may have undergone emergency repairs, weight restrictions, or other temporary measures to maintain functionality. These interventions are not reflected in the model, leading to an underestimation of their condition. Second, such bridges might experience compounded effects from environmental stressors, high traffic loads, or material degradation, which the current linear framework fails to account for.
 
-## Third discussion point
+Furthermore, measures such as weight restrictions might reduce the load on these bridges, artificially slowing further deterioration and creating a mismatch between their actual state and the model's predictions. This non-linear degradation pattern suggests that the current model has limitations in fitting low-condition bridges. Future studies could improve upon this by incorporating variables such as traffic restrictions, emergency maintenance records, and environmental stress factors. Additionally, employing non-linear models or hierarchical approaches tailored to these bridges may better capture their unique deterioration dynamics. These refinements could lead to more precise and effective maintenance strategies for low-condition bridges.
 
-## Weaknesses and next steps
-
-Weaknesses and next steps should also be included.
+## Geographic and Administrative Disparities in Bridge Conditions
+The analysis reveals significant disparities in bridge conditions based on geographic location and administrative ownership. Bridges in urban areas tend to have lower condition ratings compared to those in towns and villages, likely due to higher traffic volumes, environmental stress, and more complex structural demands in urban settings. Similarly, bridges owned by NYSDOT or private entities perform worse than those managed by municipalities, suggesting differences in maintenance priorities and resource allocation. These disparities point to the need for a more equitable distribution of infrastructure funds and tailored maintenance strategies that address the specific challenges faced by different regions and ownership groups. For example, urban bridges may benefit from more frequent inspections and targeted upgrades to withstand heavy usage, while state-owned and privately managed bridges could require enhanced funding mechanisms or stricter maintenance policies to ensure their long-term sustainability. Recognizing and addressing these geographic and administrative variations will be critical for maintaining a resilient and equitable bridge infrastructure network.
 
 \newpage
 
@@ -387,30 +390,32 @@ Weaknesses and next steps should also be included.
 
 # Appendix {-}
 
-# Appendix: Idealized Methodology for Collecting Bridge Traffic Flow Data
+# Appendix: Idealized Methodology for Collecting Bridge Traffic Flow Data {#sec-methodology}
 
 ## Overview
-The objective of this methodology is to design a robust system for collecting traffic flow data across New York State bridges. This data serves as a foundation for understanding the interaction between traffic intensity and bridge conditions. By employing rigorous sampling strategies and advanced collection techniques, this methodology ensures that the collected data is representative and actionable for policy and maintenance decisions.
+The objective of this methodology is to design a comprehensive system for collecting and analyzing traffic flow data across New York State bridges. This additional data addresses a critical gap in the current dataset, which does not include traffic intensity—a key factor influencing bridge deterioration. By integrating traffic flow data, the enhanced model aims to improve its explanatory power and provide actionable recommendations for bridge maintenance prioritization. Rigorous sampling strategies and advanced data collection techniques are employed to ensure that the data is both representative and reliable, supporting more nuanced policy and engineering decisions.
 
 ## Target Population
 The target population encompasses all operational bridges in New York State. These include bridges in urban, suburban, and rural areas, varying by traffic volume and ownership. Bridges were selected to account for:
 
-- **Geographic Coverage**: Urban centers with high traffic density, suburban transit hubs, and rural connectors.
-- **Administrative Ownership**: Municipal, NYSDOT, and privately owned bridges.
-- **Traffic Intensity**: Low-traffic rural bridges, moderate suburban thoroughfares, and high-traffic urban crossings.
+- **Geographic Coverage**: Urban areas with dense traffic flows, suburban regions with moderate traffic levels, and rural areas characterized by infrequent usage. This distribution ensures that both high-stress urban crossings and lesser-used rural bridges are accounted for.
 
-This definition ensures inclusivity, enabling the methodology to capture regional differences in traffic flow and their effect on bridge conditions.
+- **Administrative Ownership**: Bridges under municipal (local government), NYSDOT (state-level), and private ownership. This stratification accounts for variations in maintenance standards and resources available to different administrative entities.
+
+- **Traffic Intensity**: Bridges are analyzed based on their average daily traffic (ADT) volume as a continuous numeric variable. This approach allows for precise modeling of traffic intensity and its impact on bridge conditions, enabling the detection of subtle trends and relationships that may be overlooked with categorical groupings. By treating ADT as a numeric variable, the methodology provides a more granular and accurate representation of traffic flow patterns across bridges.
+
+By incorporating these dimensions, the target population captures the variability in bridge conditions and usage, enabling a comprehensive analysis of how traffic impacts structural integrity.
 
 ## Sampling Approach
 
 ### Stratification Variables
-To ensure the data represents the diversity of bridges, stratified random sampling is applied. Stratification variables include:
+To ensure that the sample accurately reflects the diversity of bridges in New York State, stratified random sampling is applied. The stratification variables are:
 
 - **Municipality Type**: City, town, village.
 - **Ownership**: Municipal, state, private.
-- **Traffic Volume**: High, medium, low daily use.
+- **Traffic Volume**: Recoord average daily traffic volume as a continuous numeric variable
 
-Each bridge within a stratum is given an equal chance of selection, ensuring proportional representation across categories.
+This approach provides proportional representation across all strata, ensuring that data collection is neither skewed toward urban high-traffic areas nor neglects low-traffic rural bridges.
 
 ### Sample Size
 Using the formula for sample size determination:
@@ -430,40 +435,46 @@ A minimum of 384 bridges is required to ensure statistically reliable data for t
 ## Data Collection Techniques
 
 ### Automatic Vehicle Counters (AVC)
-- Deployed on selected bridges to continuously record vehicle counts and classifications.
-- Cost-effective for high-traffic bridges requiring sustained monitoring.
-
+- Description: Deployed on selected bridges to continuously record vehicle counts and classifications.
+- Advantages: Cost-effective for high-traffic bridges requiring sustained monitoring.
+- Limitations: Limited effectiveness for capturing complex traffic behaviors, such as turning patterns.
 ### Camera-Based Systems
-- Capture detailed traffic patterns, including speed and vehicle types, using AI-enhanced analysis.
-- Effective for complex traffic conditions but requires privacy safeguards.
-
+- Description: AI-enhanced cameras monitor traffic, capturing vehicle speed, type, and flow patterns. Data is processed to identify trends and anomalies.
+- Advantages: Detailed and adaptable to a wide range of traffic conditions.
+- Limitations: Higher cost and potential privacy concerns, requiring strict anonymization protocols.
 ### GPS Data Integration
-- Utilize anonymized GPS data to complement on-site measurements, especially for remote or less-monitored bridges.
+- Description: Anonymized GPS data from vehicle navigation systems and smartphones supplements on-site traffic data, particularly for remote bridges with low traffic.
+- Advantages: Wide coverage and minimal additional hardware costs.
+- Limitations: Relies on external data sources, which may introduce variability in data quality.
 
 ### Manual Surveys
-- Conducted periodically to validate automated data and address gaps, particularly in low-traffic or rural settings.
-
-## Data Validation and Quality Control
-
-### Attention Checks
-Automated systems are periodically calibrated to ensure accuracy.
+- Description: Periodic on-site observations validate automated systems and address gaps in data, especially for rural or low-traffic bridges.
+- Advantages: Provides ground-truth data for calibration.
+- Limitations: Resource-intensive and limited to periodic snapshots.
+## Data Validation and Quality Control.
 
 ### Cross-Validation
-Data from multiple sources (e.g., AVC, GPS) is compared to identify discrepancies.
+Traffic flow data collected from different sources, such as AVCs, cameras, and GPS, are compared to identify and resolve discrepancies.
 
 ### Consistency Checks
-Traffic patterns are reviewed for anomalies that may indicate errors or data corruption.
+Traffic patterns are reviewed for outliers and anomalies, such as sudden spikes or drops in volume, which may indicate data errors or temporary disruptions (e.g., road closures).
+
+### Calibration
+Manual survey results are used to calibrate automated systems, ensuring accuracy across different traffic conditions and bridge types.
 
 ## Challenges and Limitations
 
 ### Coverage Bias
-Rural bridges may be underrepresented due to accessibility challenges. Tailored solutions are necessary to address this.
+- Issue: Rural and remote bridges may be underrepresented due to logistical challenges and lower prioritization.
+- Mitigation: Oversampling and supplementary data collection methods, such as GPS integration, can address this imbalance.
 
 ### Ethical Concerns
-Privacy issues related to camera and GPS monitoring must be mitigated through anonymization protocols.
+- Issue: Privacy issues arise with camera-based and GPS monitoring systems.
+- Mitigation: Implement anonymization protocols and restrict data access to ensure compliance with ethical standards.
 
 ### Budget Constraints
-High-cost technologies like AI-enabled cameras may limit widespread deployment.
+- Issue: Advanced systems, such as AI-enabled cameras, require significant investment, potentially limiting their use.
+- Mitigation: Employ a hybrid approach combining cost-effective methods (AVCs, GPS) with targeted deployment of high-cost systems.
 
 ## Relevance to Study
 Incorporating traffic flow data enhances the predictive model of bridge conditions by linking usage intensity to structural deterioration. This data allows policymakers to prioritize maintenance based on a combination of bridge condition and traffic stress.
