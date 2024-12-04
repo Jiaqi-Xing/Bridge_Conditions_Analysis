@@ -393,7 +393,7 @@ The analysis shows significant disparities in bridge conditions based on geograp
 # Appendix: Idealized Methodology for Collecting Bridge Traffic Flow Data {#sec-methodology}
 
 ## Overview
-The objective of this methodology is to design a thorough system for collecting and analyzing traffic flow data across New York State bridges. This additional data addresses an essential limitation in the current dataset, which does not include traffic intensity—a key factor influencing bridge deterioration. By integrating traffic flow data, the enhanced model aims to improve its explanatory power and provide actionable recommendations for bridge maintenance prioritization. Rigorous sampling strategies and sophisticated data collection techniques are employed to ensure that the data is both representative and reliable, supporting more detailed policy and engineering decisions.
+The objective of this methodology is to design a system for collecting and analyzing traffic flow data across New York State bridges. This additional data addresses an essential limitation in the current dataset, which does not include traffic intensity—a key factor influencing bridge deterioration. By integrating traffic flow data, the enhanced model aims to improve its explanatory power and provide actionable recommendations for bridge maintenance prioritization. Rigorous sampling strategies and sophisticated data collection techniques are employed to ensure that the data is both representative and reliable, supporting more detailed policy and engineering decisions.
 
 ## Target Population
 The target population includes all operational bridges in New York State. These include bridges in urban, suburban, and rural areas, varying by traffic volume and ownership. Bridges were selected to account for:
@@ -404,7 +404,7 @@ The target population includes all operational bridges in New York State. These 
 
 - **Traffic Intensity**: Bridges are analyzed based on their average daily traffic (ADT) volume as a continuous numeric variable. This approach allows for precise modeling of traffic intensity and its impact on bridge conditions, enabling the detection of subtle trends and relationships that may be overlooked with categorical groupings. By treating ADT as a numeric variable, the methodology provides a more granular and accurate representation of traffic flow patterns across bridges.
 
-By incorporating these dimensions, the target population captures the variability in bridge conditions and usage, enabling a detailed analysis of how traffic impacts structural integrity.
+By incorporating these dimensions, the target population captures the variability in bridge conditions and usage, enabling an analysis of how traffic impacts structural integrity.
 
 ## Sampling Approach
 
